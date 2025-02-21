@@ -1,0 +1,189 @@
+package controllers
+
+import (
+	"library-management-api/models"
+	"library-management-api/services"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+// AddBook handles adding a new book to the library
+// func AddBook(c *gin.Context) {
+// 	// Get user making the request (Assuming middleware sets user info)
+// 	user, exists := c.Get("user") // Fetch the user from the context
+// 	if !exists {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+// 		return
+// 	}
+
+// 	// Type assert user to models.User
+// 	userModel, ok := user.(models.User)
+// 	if !ok {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
+// 		return
+// 	}
+
+// 	// Only LibraryAdmin & Owner can add books
+// 	if userModel.Role != "LibraryAdmin" && userModel.Role != "Owner" {
+// 		c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
+// 		return
+// 	}
+
+// 	var request struct {
+// 		ISBN            string `json:"isbn" binding:"required"`
+// 		Title           string `json:"title" binding:"required"`
+// 		Authors         string `json:"authors" binding:"required"`
+// 		Publisher       string `json:"publisher" binding:"required"`
+// 		Version         string `json:"version"`
+// 		TotalCopies     int    `json:"total_copies" binding:"required"`
+// 		AvailableCopies int    `json:"available_copies" binding:"required"`
+// 	}
+
+// 	// Bind JSON request
+// 	if err := c.ShouldBindJSON(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	// Create Book with `LibID` from the user's profile
+// 	book := models.Book{
+// 		ISBN:            request.ISBN,
+// 		LibID:           userModel.LibID, // ✅ Assign LibID from user's profile
+// 		Title:           request.Title,
+// 		Authors:         request.Authors,
+// 		Publisher:       request.Publisher,
+// 		Version:         request.Version,
+// 		TotalCopies:     request.TotalCopies,
+// 		AvailableCopies: request.AvailableCopies,
+// 	}
+
+// 	// Call service to add book
+// 	err := services.AddBook(&book)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	// Success response
+// 	c.JSON(http.StatusCreated, gin.H{
+// 		"message": "Book added successfully",
+// 		"book":    book,
+// 	})
+// }
+
+func AddBook(c *gin.Context) {
+	var request struct {
+		ISBN            string `json:"isbn" binding:"required"`
+		LibID           uint   `json:"lib_id" binding:"required"` // ✅ Temporarily taking LibID from request
+		Title           string `json:"title" binding:"required"`
+		Authors         string `json:"authors" binding:"required"`
+		Publisher       string `json:"publisher" binding:"required"`
+		Version         string `json:"version"`
+		TotalCopies     int    `json:"total_copies" binding:"required"`
+		AvailableCopies int    `json:"available_copies" binding:"required"`
+	}
+
+	// Bind JSON request
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create Book using LibID from the request
+	book := models.Book{
+		ISBN:            request.ISBN,
+		LibID:           request.LibID, // ✅ Temporary: Using `LibID` from request
+		Title:           request.Title,
+		Authors:         request.Authors,
+		Publisher:       request.Publisher,
+		Version:         request.Version,
+		TotalCopies:     request.TotalCopies,
+		AvailableCopies: request.AvailableCopies,
+	}
+
+	// Call service to add book
+	err := services.AddBook(&book)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Book added successfully",
+		"book":    book,
+	})
+}
+
+// GetBooksByLibrary retrieves all books for a specific library
+func GetBooksByLibrary(c *gin.Context) {
+	libID, err := strconv.ParseUint(c.Param("libID"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid library ID"})
+		return
+	}
+
+	// Call service to fetch books
+	books, err := services.GetBooksByLibrary(uint(libID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusOK, gin.H{"books": books})
+}
+
+// GetBookByISBN retrieves a single book by ISBN
+func GetBookByISBN(c *gin.Context) {
+	isbn := c.Param("isbn")
+
+	// Call service to fetch book
+	book, err := services.GetBookByISBN(isbn)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusOK, gin.H{"book": book})
+}
+
+// UpdateBook handles updating book details
+func UpdateBook(c *gin.Context) {
+	isbn := c.Param("isbn")
+	var updatedBook models.Book
+
+	// Bind JSON request
+	if err := c.ShouldBindJSON(&updatedBook); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call service to update book
+	err := services.UpdateBook(isbn, &updatedBook)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusOK, gin.H{"message": "Book updated successfully"})
+}
+
+// DeleteBook handles removing a book from the library
+func DeleteBook(c *gin.Context) {
+	isbn := c.Param("isbn")
+
+	// Call service to delete book
+	err := services.DeleteBook(isbn)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusOK, gin.H{"message": "Book deleted successfully"})
+}
