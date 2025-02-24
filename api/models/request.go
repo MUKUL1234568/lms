@@ -1,16 +1,19 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type RequestEvent struct {
-	ReqID        uint   `gorm:"primaryKey;autoIncrement" json:"req_id"`
-	BookID       string `gorm:"not null" json:"book_id"`
-	ReaderID     uint   `gorm:"not null" json:"reader_id"`
-	RequestDate  string `gorm:"not null" json:"request_date"`
-	ApprovalDate string `json:"approval_date"`
-	ApproverID   uint   `json:"approver_id"`
-	RequestType  string `gorm:"not null" json:"request_type"` // "Issue" or "Return"
-
+	ReqID        uint       `gorm:"primaryKey;autoIncrement" json:"req_id"`
+	BookID       string     `gorm:"not null" json:"book_id"`
+	ReaderID     uint       `gorm:"not null" json:"reader_id"`
+	RequestDate  time.Time  `gorm:"not null" json:"request_date"`
+	ApprovalDate *time.Time `json:"approval_date"`                // ✅ Nullable (NULL if not approved)
+	ApproverID   *uint      `json:"approver_id"`                  // ✅ Nullable (NULL if not approved)
+	RequestType  string     `gorm:"not null" json:"request_type"` // "Issue" or "Return"
 }
 
 // Migrate RequestEvent table

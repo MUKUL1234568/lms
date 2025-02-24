@@ -29,9 +29,12 @@ func main() {
 	router := gin.Default()
 
 	// Register API Routes
+	routes.AuthRoutes(router)
 	routes.LibraryRoutes(router) // ✅ Register library routes
 	routes.UserRoutes(router)    // ✅ User Routes
 	routes.BookRoutes(router)
+	routes.RequestRoutes(router)
+	routes.IssueRegistryRoutes(router)
 
 	// Start the server
 	router.Run(":8080") // Run server on port 8080

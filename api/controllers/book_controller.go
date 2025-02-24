@@ -1,12 +1,11 @@
 package controllers
 
 import (
+	// "fmt"
+	"github.com/gin-gonic/gin"
 	"library-management-api/models"
 	"library-management-api/services"
 	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 // AddBook handles adding a new book to the library
@@ -119,14 +118,23 @@ func AddBook(c *gin.Context) {
 
 // GetBooksByLibrary retrieves all books for a specific library
 func GetBooksByLibrary(c *gin.Context) {
-	libID, err := strconv.ParseUint(c.Param("libID"), 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid library ID"})
+	// Ensure correct key name (Check how it's stored in AuthMiddleware)
+	libIDInterface, exists := c.Get("lib_id") // ✅ Use lowercase "lib_id"
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
+	// Convert interface{} to float64 first, then to uint
+	libIDFloat, ok := libIDInterface.(float64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Library ID format"})
+		return
+	}
+	libID := uint(libIDFloat) // ✅ Convert float64 to uint
+
 	// Call service to fetch books
-	books, err := services.GetBooksByLibrary(uint(libID))
+	books, err := services.GetBooksByLibrary(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

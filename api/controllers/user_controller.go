@@ -34,10 +34,7 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	// Set default role as "Reader" if no role is provided
-	userRole := request.Role
-	if userRole == "" {
-		userRole = "Reader"
-	}
+	userRole := "Reader"
 
 	// Create User
 	user := models.User{
@@ -71,38 +68,38 @@ func RegisterUser(c *gin.Context) {
 }
 
 // LoginUser handles user authentication
-func LoginUser(c *gin.Context) {
-	var request struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required"`
-	}
+// func LoginUser(c *gin.Context) {
+// 	var request struct {
+// 		Email    string `json:"email" binding:"required,email"`
+// 		Password string `json:"password" binding:"required"`
+// 	}
 
-	// Bind JSON request
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+// 	// Bind JSON request
+// 	if err := c.ShouldBindJSON(&request); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	// Authenticate User
-	user, err := services.AuthenticateUser(request.Email, request.Password)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-		return
-	}
+// 	// Authenticate User
+// 	user, err := services.AuthenticateUser(request.Email, request.Password)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+// 		return
+// 	}
 
-	// Success Response (Hiding Password)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Login successful",
-		"user": gin.H{
-			"id":             user.ID,
-			"name":           user.Name,
-			"email":          user.Email,
-			"contact_number": user.ContactNumber,
-			"role":           user.Role,
-			"lib_id":         user.LibID,
-		},
-	})
-}
+// 	// Success Response (Hiding Password)
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"message": "Login successful",
+// 		"user": gin.H{
+// 			"id":             user.ID,
+// 			"name":           user.Name,
+// 			"email":          user.Email,
+// 			"contact_number": user.ContactNumber,
+// 			"role":           user.Role,
+// 			"lib_id":         user.LibID,
+// 		},
+// 	})
+// }
 
 // GetUser fetches user details by ID
 func GetUser(c *gin.Context) {
@@ -125,4 +122,30 @@ func GetUser(c *gin.Context) {
 			"lib_id":         user.LibID,
 		},
 	})
+}
+
+func GetUsersByLibrary(c *gin.Context) {
+	libIDInterface, exists := c.Get("lib_id") // ✅ Use lowercase "lib_id"
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	// Convert interface{} to float64 first, then to uint
+	libIDFloat, ok := libIDInterface.(float64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Library ID format"})
+		return
+	}
+	libID := uint(libIDFloat) // ✅ Convert float64 to uint
+
+	// Call service to fetch books
+	books, err := services.GetUsersByLibrary(libID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Success response
+	c.JSON(http.StatusOK, gin.H{"books": books})
 }
