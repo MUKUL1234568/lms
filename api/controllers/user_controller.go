@@ -149,3 +149,34 @@ func GetUsersByLibrary(c *gin.Context) {
 	// Success response
 	c.JSON(http.StatusOK, gin.H{"books": books})
 }
+
+func MakeAdmin(c *gin.Context) {
+	userid := c.Param("id")
+	var request struct {
+		Role string `json:"role" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := services.MakeAdmin(userid, request.Role)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "service is not initiated "})
+	}
+	c.JSON(http.StatusOK, gin.H{"admin": user})
+}
+
+func DeleteUser(c *gin.Context) {
+	userid := c.Param("id")
+
+	err := services.DeleteUser(userid)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Service not called"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted succesfully"})
+
+}

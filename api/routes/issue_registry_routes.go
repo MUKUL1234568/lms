@@ -15,7 +15,7 @@ func IssueRegistryRoutes(router *gin.Engine) {
 		issueGroup.Use(middleware.AuthMiddleware())
 
 		// ✅ LibraryAdmin can see all issued books
-		issueGroup.GET("/admin", middleware.RoleMiddleware("LibraryAdmin"), controllers.GetAllIssuedBooks)
+		issueGroup.GET("/admin", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllIssuedBooks)
 
 		// ✅ Readers can see their issued books
 		issueGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetIssuedBooksByReader)

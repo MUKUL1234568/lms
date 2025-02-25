@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+
 	"library-management-api/config"
 	"library-management-api/models"
 )
@@ -27,4 +28,30 @@ func GetUsersByLibrary(libID uint) ([]models.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func MakeAdmin(userID string, role string) (*models.User, error) {
+	var user models.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		return nil, errors.New("user not found")
+	}
+	user.Role = role
+	if err := config.DB.Save(&user).Error; err != nil {
+		return nil, errors.New("faild to save to make admin ")
+	}
+	return &user, nil
+}
+
+func DeleteUser(userid string) error {
+	var user models.User
+	errr := config.DB.First(&user, userid).Error
+	if errr != nil {
+		return errors.New("user not found")
+	}
+
+	err := config.DB.Delete(&user).Error
+	if err != nil {
+		return errors.New("failed to delete ")
+	}
+	return nil
 }

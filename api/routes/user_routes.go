@@ -15,10 +15,13 @@ func UserRoutes(router *gin.Engine) {
 
 		// Protected User Routes
 		userGroup.Use(middleware.AuthMiddleware())
+		userGroup.PUT("/role/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
 		userGroup.GET("/", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
 		// ✅ Requires Authentication
-		userGroup.GET("/:id", controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
+		userGroup.GET("/:id", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
+		userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
 	}
+
 }
 
 // {"isbn": "978-0134190440",
