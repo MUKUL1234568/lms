@@ -30,3 +30,13 @@ func CreateLibrary(owner *models.User, library *models.Library) error {
 	tx.Commit()
 	return nil
 }
+
+func GetAllLibraries() ([]models.Library, error) {
+	var libraries []models.Library
+
+	if err := config.DB.Find(&libraries).Error; err != nil {
+		return nil, errors.New("failed to fetch libraries")
+	}
+
+	return libraries, nil
+}

@@ -63,3 +63,13 @@ func CreateLibrary(c *gin.Context) {
 		"owner":   owner,
 	})
 }
+
+func GetLibraries(c *gin.Context) {
+	libraries, err := services.GetAllLibraries()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"libraries": libraries})
+}

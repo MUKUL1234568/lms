@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"library-management-api/config"
 	"library-management-api/models"
 	"library-management-api/routes"
@@ -27,8 +28,16 @@ func main() {
 
 	// Initialize Gin Router
 	router := gin.Default()
+	router.Use(CORSMiddleware())
+	// router.Use(cors.New(cors.Config{
+	// 	AllowOrigins:     []string{"http://localhost:5173"}, // ✅ Allow frontend origin
+	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+	// 	AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+	// 	ExposeHeaders:    []string{"Content-Length"},
+	// 	AllowCredentials: true,           // Allow cookies and credentials to be sent
+	// 	MaxAge:           12 * time.Hour, // Max Age for CORS preflight requests
+	// }))
 
-	// Register API Routes
 	routes.AuthRoutes(router)
 	routes.LibraryRoutes(router) // ✅ Register library routes
 	routes.UserRoutes(router)    // ✅ User Routes
@@ -38,4 +47,23 @@ func main() {
 
 	// Start the server
 	router.Run(":8080") // Run server on port 8080
+}
+
+func CORSMiddleware() gin.HandlerFunc {
+	fmt.Println("cors ")
+	return func(c *gin.Context) {
+		fmt.Println("header set")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+
 }
