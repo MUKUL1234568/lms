@@ -1,0 +1,47 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .main-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 2rem;
+    background-color: #f9f9f9;
+  }
+  
+  .content-header {
+    display: flex;
+    justify-content: space-between; /* This ensures the content is spread out */
+    align-items: center; /* Vertically centers the items */
+    margin-bottom: 4rem;
+  }
+  
+  .add-book-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+    width: auto; /* Automatically adjusts the width based on the button */
+  }
+  .add-book-btn {
+    padding: .5rem 1rem;
+    font-size: 1rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 111px;
+    box-sizing: border-box 2;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  
+  .add-book-btn:hover {
+    background-color: #45a049;
+  }
+  
+  

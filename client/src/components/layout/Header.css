@@ -1,0 +1,48 @@
+.header {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.header nav {
+  display: flex; /* Make nav a flex container */
+}
+
+.header nav ul {
+  list-style: none;
+  display: flex; /* Ensure ul is a flex container */
+  gap: 20px; /* Space between items */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+}
+
+.header nav ul li {
+  display: flex; /* Ensure li is a flex container for better alignment */
+  align-items: center; /* Center items vertically */
+}
+
+.header nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.header nav ul li a:hover {
+  text-decoration: underline;
+}
+
+.login-btn,
+.logout-btn,
+.signup-btn
+{
+  cursor: pointer; /* Change cursor to pointer for buttons */
+}

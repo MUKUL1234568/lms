@@ -1,0 +1,36 @@
+.modal-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    position: relative;  /* Ensures the absolute button is positioned relative to the modal */
+    width: 90%;
+    max-width: 500px;
+  }
+  
+  .close-button {
+    width: 50px;
+    position: absolute;
+    top: 5px;  /* Space from the top */
+    right: 10px;  /* Space from the right */
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: red;
+    z-index: 10;  /* Ensure button is above other content */
+  }
+  
+   
