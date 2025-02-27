@@ -3,6 +3,12 @@ import "./Sidebar.css"
 const Sidebar = ({ activeTab, setActiveTab }) => {
   return (
     <div className="sidebar">
+      <button
+        className={`sidebar-btn ${activeTab === "dashboard" ? "active" : ""}`}
+        onClick={() => setActiveTab("dashboard")}
+      >
+        Overview
+      </button>
       <button className={`sidebar-btn ${activeTab === "books" ? "active" : ""}`} onClick={() => setActiveTab("books")}>
         Books
       </button>

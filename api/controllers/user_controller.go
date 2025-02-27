@@ -140,14 +140,14 @@ func GetUsersByLibrary(c *gin.Context) {
 	libID := uint(libIDFloat) // ✅ Convert float64 to uint
 
 	// Call service to fetch books
-	books, err := services.GetUsersByLibrary(libID)
+	users, err := services.GetUsersByLibrary(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Success response
-	c.JSON(http.StatusOK, gin.H{"books": books})
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }
 
 func MakeAdmin(c *gin.Context) {

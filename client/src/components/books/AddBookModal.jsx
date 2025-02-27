@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, version } from "react"
 import Modal from "./Modal"
 import "./AddBookModal.css"
 
 const AddBookModal = ({ onClose, onAdd }) => {
-  const [newBook, setNewBook] = useState({ title: "", author: "", year: "" })
+  const [newBook, setNewBook] = useState({ isbn:"",title: "", authors: "",publisher:"",version:"" ,total_copies: ""})
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -25,16 +25,37 @@ const AddBookModal = ({ onClose, onAdd }) => {
         />
         <input
           type="text"
+          placeholder="ISBN"
+          value={newBook.isbn}
+          onChange={(e) => setNewBook({ ...newBook,isbn: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Publisher"
+          value={newBook.publisher}
+          onChange={(e) => setNewBook({ ...newBook, publisher: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Version"
+          value={newBook.version}
+          onChange={(e) => setNewBook({ ...newBook, version: e.target.value })}
+          required
+        />
+        <input
+          type="text"
           placeholder="Author"
           value={newBook.author}
-          onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
+          onChange={(e) => setNewBook({ ...newBook, authors: e.target.value })}
           required
         />
         <input
           type="number"
-          placeholder="Year"
-          value={newBook.year}
-          onChange={(e) => setNewBook({ ...newBook, year: e.target.value })}
+          placeholder="Total Copies"
+          value={newBook.total_copies}
+          onChange={(e) => setNewBook({ ...newBook, total_copies: e.target.value })}
           required
         />
         <button type="submit" className="submit-btn">

@@ -51,6 +51,7 @@ func CreateRequest(c *gin.Context) {
 		ReaderID:    readerID, // ✅ Fixed conversion issue
 		RequestType: request.RequestType,
 		RequestDate: time.Now(),
+		Status:      "pending",
 	}
 
 	// Call service to create request
@@ -166,6 +167,7 @@ func GetAllRequestsForAdmin(c *gin.Context) {
 	// }
 
 	// Call service to fetch all requests
+
 	requests, err := services.GetAllRequests()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

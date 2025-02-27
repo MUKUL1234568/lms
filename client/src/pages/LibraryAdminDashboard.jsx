@@ -5,21 +5,22 @@ import Header from "../components/layout/Header"
 import Sidebar from "../components/admin/Sidebar"
 import BookList from "../components/books/BookList"
 import axios from "axios"
-// import RequestList from "./components/RequestList"
-// import UserList from "./components/UserList"
-// import IssuedBookList from "./components/IssuedBookList"
+import Dashboard from "../components/admin/Dashboard"
+ import RequestList from "../components/admin/RequestList"  
+ import UserList from "../components/admin/UserList"
+ import IssuedBookList from "../components/books/IssuedBookList" 
 import AddBookModal from "../components/books/AddBookModal"
 // import EditBookModal from "./components/EditBookModal"
 import "./admin.css"
 
 const admin = () => {
-  const [activeTab, setActiveTab] = useState("books")
+  const [activeTab, setActiveTab] = useState("dashboard")
   const [showAddBookModal, setShowAddBookModal] = useState(false)
   const [showEditBookModal, setShowEditBookModal] = useState(false)
   const [editingBook, setEditingBook] = useState(null)
   const [books, setBooks] = useState([])
-
-
+  const [users, setUsers] = useState([])
+   const [requests, setRequests] = useState([])
   const fetchbook= async ()=>{
     const token =localStorage.getItem("token");
   
@@ -41,30 +42,90 @@ const admin = () => {
         console.error("error in fetching the ",error)
     }
   };
+  const fetchuser= async ()=>{
+    const token =localStorage.getItem("token");
+  
+    try{
+      const response =await axios.get("http://localhost:8080/users/",{
+        headers:{
+            Authorization:` Bearer ${token}`,
+        },
+      });
+     
+      if(response.status==200)
+      {
+        setUsers(response.data.users)
+      }
+      else{
+        console.log("error in fetching the users from database")
+      }
+    } catch(error){
+        console.error("error in fetching the user ",error)
+    }
+  };
+ 
+  const fetchrequest= async ()=>{
+    const token =localStorage.getItem("token");
+  
+    try{
+      const response =await axios.get("http://localhost:8080/requests/allreq",{
+        headers:{
+            Authorization:` Bearer ${token}`,
+        },
+      });
+     
+      if(response.status==200)
+      {
+        console.log(response.data.requests)
+        setRequests(response.data.requests)
+      }
+      else{
+        console.log("error in fetching the req from database")
+      }
+    } catch(error){
+        console.error("error in fetching the req ",error)
+    }
+  };
   useEffect(()=>{
-      fetchbook();
+    fetchbook();
+    fetchuser();
+    fetchrequest();
+},[]);
 
-  },[]);
+   
 
-  useEffect(() => {
-    console.log("Books have been updated:", books);
-  }, [books]);
-
-  const [requests, setRequests] = useState([
-    { id: 1, bookId: 1, userId: 1, status: "pending" },
-    { id: 2, bookId: 2, userId: 2, status: "pending" },
-  ])
-  const [users, setUsers] = useState([
-    { id: 1, name: "John Doe", email: "john@example.com" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com" },
-  ])
+ 
   const [issuedBooks, setIssuedBooks] = useState([
-    { id: 1, bookId: 1, userId: 1, issueDate: "2023-05-01", returnDate: "2023-05-15" },
+    { id: 1, bookId: "977-0234190440", userId: 1, issueDate: "2023-05-01", returnDate: "2023-05-15" },
   ])
 
-  const addBook = (newBook) => {
-    setBooks([...books, { id: books.length + 1, ...newBook }])
+ 
+ 
+
+  const addBook =  async (newBook) => {
+    
+    const token=localStorage.getItem("token")
+    try{
+      const response= await axios.post("http://localhost:8080/books/",{...newBook, total_copies: Number(newBook.total_copies)} ,{
+        headers:{ "Content-Type":"application/json",
+          Authorization:`Bearer ${token}`
+                  
+        }
+        
+      });
+         if(response.status==201){
+          setBooks([...books, { ...newBook,available_copies:newBook.total_copies }])
+          console.log("book added")
+         }
+         else{
+          console.error("faild to add book ")
+         }
+
+    } catch(error){
+            console.error("erroe in adding the book",error)
+    }
     setShowAddBookModal(false)
+
   }
 
   const updateBook = (updatedBook) => {
@@ -77,23 +138,26 @@ const admin = () => {
   }
 
   const approveRequest = (id) => {
-    const request = requests.find((r) => r.id === id)
-    setRequests(requests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)))
+    const request = requests.find((r) => r.req_id === id)
+    setRequests(requests.map((r) => (r.req_id === id ? { ...r, status: "approved" } : r)))
     setIssuedBooks([
       ...issuedBooks,
       {
         id: issuedBooks.length + 1,
-        bookId: request.bookId,
-        userId: request.userId,
+        bookId: request.book_id,
+        userId: request.reader_id,
         issueDate: new Date().toISOString().split("T")[0],
         returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       },
     ])
   }
 
-  const updateIssuedBook = (id, status) => {
-    setIssuedBooks(issuedBooks.map((book) => (book.id === id ? { ...book, status } : book)))
+  const rejectRequest = (id) => {
+    setRequests(requests.map((r) => (r.req_id === id ? { ...r, status: "rejected" } : r)))
   }
+  // const updateIssuedBook = (id, status) => {
+  //   setIssuedBooks(issuedBooks.map((book) => (book.id === id ? { ...book, status } : book)))
+  // }
 
   return (
     <><Header />
@@ -101,6 +165,7 @@ const admin = () => {
       <div className="main-content">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="content">
+        {activeTab === "dashboard" && <Dashboard books={books} issuedBooks={issuedBooks} users={users} />}
           {activeTab === "books" && (
             <>
               <div className="content-header">
@@ -121,24 +186,25 @@ const admin = () => {
               />
             </>
           )}
-          {/* {activeTab === "requests" && (
+           {activeTab === "requests" && (
             <>
               <h2>Pending Requests</h2>
-              <RequestList requests={requests} books={books} users={users} onApprove={approveRequest} />
+              <RequestList requests={requests} books={books} users={users} onApprove={approveRequest} onReject={rejectRequest}
+              />
             </>
           )}
           {activeTab === "users" && (
             <>
               <h2>User List</h2>
-              <UserList users={users} />
+              <UserList users={users} issuedBooks={issuedBooks} books={books}/>
             </>
           )}
           {activeTab === "issued" && (
             <>
               <h2>Issued Books</h2>
-              <IssuedBookList issuedBooks={issuedBooks} books={books} users={users} onUpdateStatus={updateIssuedBook} />
+              <IssuedBookList issuedBooks={issuedBooks} books={books} users={users}   />
             </>
-          )} */}
+          )}
         </div>
       </div>
       {showAddBookModal && <AddBookModal onClose={() => setShowAddBookModal(false)} onAdd={addBook} />}

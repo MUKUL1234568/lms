@@ -74,14 +74,13 @@ import (
 
 func AddBook(c *gin.Context) {
 	var request struct {
-		ISBN            string `json:"isbn" binding:"required"`
-		LibID           uint   `json:"lib_id" binding:"required"` // ✅ Temporarily taking LibID from request
-		Title           string `json:"title" binding:"required"`
-		Authors         string `json:"authors" binding:"required"`
-		Publisher       string `json:"publisher" binding:"required"`
-		Version         string `json:"version"`
-		TotalCopies     int    `json:"total_copies" binding:"required"`
-		AvailableCopies int    `json:"available_copies" binding:"required"`
+		ISBN        string `json:"isbn" binding:"required"`
+		LibID       uint   `json:"lib_id"` // ✅ Temporarily taking LibID from request
+		Title       string `json:"title" binding:"required"`
+		Authors     string `json:"authors" binding:"required"`
+		Publisher   string `json:"publisher" binding:"required"`
+		Version     string `json:"version"`
+		TotalCopies int    `json:"total_copies" binding:"required"`
 	}
 
 	// Bind JSON request
@@ -89,17 +88,30 @@ func AddBook(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	libIDInterface, exists := c.Get("lib_id") // ✅ Use lowercase "lib_id"
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	// // Convert interface{} to float64 first, then to uint
+	libIDFloat, ok := libIDInterface.(float64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Library ID format"})
+		return
+	}
+	libID := uint(libIDFloat) // ✅ Convert float64 to uint
 
 	// Create Book using LibID from the request
 	book := models.Book{
 		ISBN:            request.ISBN,
-		LibID:           request.LibID, // ✅ Temporary: Using `LibID` from request
+		LibID:           libID, // ✅ Temporary: Using `LibID` from request
 		Title:           request.Title,
 		Authors:         request.Authors,
 		Publisher:       request.Publisher,
 		Version:         request.Version,
 		TotalCopies:     request.TotalCopies,
-		AvailableCopies: request.AvailableCopies,
+		AvailableCopies: request.TotalCopies,
 	}
 
 	// Call service to add book

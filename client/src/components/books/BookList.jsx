@@ -1,9 +1,27 @@
 import "./BookList.css"
-
+import { useState, version } from "react"
 const BookList = ({ books, onEdit, onRemove }) => {
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const filteredBooks = books.filter(
+    (book) =>
+      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.isbn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.publisher?.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
   return (
+    <div className="book-list-container">
+       <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by title, ISBN, or publisher"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+      </div>
     <div className="book-list">
-      {books.map((book) => (
+      {filteredBooks.map((book) => (
         <div key={book.id} className="book-item">
           <h3>{book.title}</h3>
           <p>
@@ -35,6 +53,7 @@ const BookList = ({ books, onEdit, onRemove }) => {
           </div>
         </div>
       ))}
+    </div>
     </div>
   )
 }
