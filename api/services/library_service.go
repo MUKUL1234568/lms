@@ -40,3 +40,8 @@ func GetAllLibraries() ([]models.Library, error) {
 
 	return libraries, nil
 }
+func Getlibbyid(id uint) error {
+	var library *models.Library
+	err := config.DB.Where("id=?", id).First(&library).Error
+	return err
+}

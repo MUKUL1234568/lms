@@ -76,9 +76,9 @@ func AddBook(c *gin.Context) {
 	var request struct {
 		ISBN        string `json:"isbn" binding:"required"`
 		LibID       uint   `json:"lib_id"` // ✅ Temporarily taking LibID from request
-		Title       string `json:"title" binding:"required"`
-		Authors     string `json:"authors" binding:"required"`
-		Publisher   string `json:"publisher" binding:"required"`
+		Title       string `json:"title" binding:"required,len=20"`
+		Authors     string `json:"authors" binding:"required, len=20"`
+		Publisher   string `json:"publisher" binding:"required,len=20"`
 		Version     string `json:"version"`
 		TotalCopies int    `json:"total_copies" binding:"required"`
 	}
@@ -212,8 +212,4 @@ func DeleteBook(c *gin.Context) {
 
 	// Success response
 	c.JSON(http.StatusOK, gin.H{"message": "Book deleted successfully"})
-}
-
-func SearchByFilter(c *gin.Context) {
-
 }

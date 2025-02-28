@@ -1,14 +1,23 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"library-management-api/models"
 	"library-management-api/services"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	"regexp"
 )
+
+func validatephonenumbr(con_num string) error {
+	re := regexp.MustCompile(`^\d{10}$`)
+	if !re.MatchString(con_num) {
+		return errors.New("contact number should be of 10 digit ")
+	}
+	return nil
+}
 
 // CreateLibrary handles the creation of a new library with an owner
 func CreateLibrary(c *gin.Context) {
@@ -17,11 +26,16 @@ func CreateLibrary(c *gin.Context) {
 		OwnerName     string `json:"owner_name" binding:"required"`
 		OwnerEmail    string `json:"owner_email" binding:"required,email"`
 		OwnerPassword string `json:"owner_password" binding:"required"`
-		OwnerContact  string `json:"owner_contact"`
+		OwnerContact  string `json:"owner_contact" binding :"required"`
 	}
 
 	// Bind JSON request
 	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := validatephonenumbr(request.OwnerContact); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

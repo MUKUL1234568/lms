@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"library-management-api/models"
 	"library-management-api/services"
 	"net/http"
@@ -16,12 +17,23 @@ func RegisterUser(c *gin.Context) {
 		Email         string `json:"email" binding:"required,email"`
 		Password      string `json:"password" binding:"required"`
 		ContactNumber string `json:"contact_number"  binding:"required"`
-		LibID         uint   `json:"lib_id" binding:"required"`
+		LibID         uint   `json:"lib_id" binding:"required,numeric"`
 	}
 
 	// Bind JSON request
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := validatephonenumbr(request.ContactNumber); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println(request.LibID)
+	err := services.Getlibbyid(request.LibID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "library not exsits"})
 		return
 	}
 
@@ -32,7 +44,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	// Set default role as "Reader" if no role is provided
+	// Set default role as "Reader"
 	userRole := "Reader"
 
 	// Create User

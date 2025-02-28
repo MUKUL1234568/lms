@@ -14,9 +14,7 @@ func BookRoutes(router *gin.Engine) {
 		// ✅ Public Route (Anyone Can View Books)
 		bookGroup.GET("/:isbn", controllers.GetBookByISBN)
 		bookGroup.GET("/lib", middleware.AuthMiddleware(), controllers.GetBooksByLibrary)
-		bookGroup.POST("/filter", controllers.SearchByFilter)
 
-		// ✅ Protected Routes (Only LibraryAdmins)
 		protected := bookGroup.Group("/")
 		protected.Use(middleware.AuthMiddleware(), middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
 		protected.POST("/", controllers.AddBook)
