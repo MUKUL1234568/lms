@@ -18,7 +18,7 @@ func BookRoutes(router *gin.Engine) {
 
 		// ✅ Protected Routes (Only LibraryAdmins)
 		protected := bookGroup.Group("/")
-		protected.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("LibraryAdmin"))
+		protected.Use(middleware.AuthMiddleware(), middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
 		protected.POST("/", controllers.AddBook)
 		protected.PUT("/:isbn", controllers.UpdateBook)
 		protected.DELETE("/:isbn", controllers.DeleteBook)

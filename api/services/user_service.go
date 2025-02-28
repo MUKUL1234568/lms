@@ -13,9 +13,9 @@ func RegisterUser(user *models.User) error {
 }
 
 // GetUserByID retrieves user details by ID
-func GetUserByID(userID string) (*models.User, error) {
+func GetUserByID(userID uint) (*models.User, error) {
 	var user models.User
-	if err := config.DB.First(&user, userID).Error; err != nil {
+	if err := config.DB.Preload("Requests").Preload("IssueRecords").First(&user, userID).Error; err != nil {
 		return nil, errors.New("user not found")
 	}
 	return &user, nil
@@ -23,7 +23,7 @@ func GetUserByID(userID string) (*models.User, error) {
 
 func GetUsersByLibrary(libID uint) ([]models.User, error) {
 	var users []models.User
-	err := config.DB.Where("lib_id = ?", libID).Find(&users).Error
+	err := config.DB.Preload("Requests").Preload("IssueRecords").Where("lib_id = ?", libID).Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func MakeAdmin(userID string, role string) (*models.User, error) {
 
 func DeleteUser(userid string) error {
 	var user models.User
-	errr := config.DB.First(&user, userid).Error
+	errr := config.DB.Find(&user, userid).Error
 	if errr != nil {
 		return errors.New("user not found")
 	}

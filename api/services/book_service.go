@@ -14,7 +14,7 @@ func AddBook(book *models.Book) error {
 // GetBooksByLibrary retrieves all books in a specific library
 func GetBooksByLibrary(libID uint) ([]models.Book, error) {
 	var books []models.Book
-	err := config.DB.Where("lib_id = ?", libID).Find(&books).Error
+	err := config.DB.Preload("IssueRecords").Preload("Requests").Where("lib_id = ?", libID).Find(&books).Error
 	if err != nil {
 		return nil, err
 	}

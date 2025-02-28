@@ -6,6 +6,8 @@ import (
 	"library-management-api/config"
 	"library-management-api/models"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // CreateRequest stores a new book request in the database
@@ -28,7 +30,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 		// Check if book is available
 		var book models.Book
 		fmt.Println("ok")
-		if err := config.DB.Where("isbn = ?", request.BookID).First(&book).Error; err != nil {
+		if err := config.DB.Where("isbn = ?", request.ISBN).First(&book).Error; err != nil {
 			return errors.New("book not found")
 		}
 
@@ -45,9 +47,9 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 
 		// ✅ Fix: Dereference `ApproverID`
 		issue := models.IssueRegistry{
-			ISBN:            request.BookID,
+			ISBN:            request.ISBN,
 			ReaderID:        request.ReaderID,
-			IssueApproverID: *request.ApproverID, // ✅ Fix: Use `*request.ApproverID`
+			IssueApproverID: request.ApproverID, // ✅ Fix: Use `*request.ApproverID`
 			IssueStatus:     "Issued",
 			IssueDate:       *request.ApprovalDate,
 			ExpectedReturn:  &expectedReturn, // ✅ Fix: Store pointer
@@ -58,7 +60,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 	} else if request.RequestType == "Return" {
 		// Process book return
 		var issue models.IssueRegistry
-		if err := config.DB.Where("isbn = ? AND reader_id = ? AND issue_status = 'Issued'", request.BookID, request.ReaderID).First(&issue).Error; err != nil {
+		if err := config.DB.Where("isbn = ? AND reader_id = ? AND issue_status = 'Issued'", request.ISBN, request.ReaderID).First(&issue).Error; err != nil {
 			return errors.New("no active issue record found")
 		}
 
@@ -68,12 +70,12 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 		issue.ReturnDate = &now
 
 		// ✅ Fix: Dereference `ApproverID`
-		issue.ReturnApproverID = *request.ApproverID // ✅ Fix: Use `*request.ApproverID`
+		issue.ReturnApproverID = request.ApproverID // ✅ Fix: Use `*request.ApproverID`
 		config.DB.Save(&issue)
 
 		// Increase available copies
 		var book models.Book
-		if err := config.DB.Where("isbn = ?", request.BookID).First(&book).Error; err == nil {
+		if err := config.DB.Where("isbn = ?", request.ISBN).First(&book).Error; err == nil {
 			book.AvailableCopies += 1
 			config.DB.Save(&book)
 		}
@@ -101,7 +103,11 @@ func GetRequestByID(requestID uint, request *models.RequestEvent) error {
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
 func GetAllRequests() ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
-	err := config.DB.Find(&requests).Error
+	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
+		return db.Select("isbn", "title", "publisher")
+	}).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("name", "email", "id")
+	}).Find(&requests).Error
 	if err != nil {
 		return nil, err
 	}

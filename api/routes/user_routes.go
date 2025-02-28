@@ -9,16 +9,16 @@ import (
 
 // UserRoutes registers user-related routes
 func UserRoutes(router *gin.Engine) {
-	userGroup := router.Group("/users")
+	userGroup := router.Group("/user")
 	{
 		userGroup.POST("/register", controllers.RegisterUser) // ✅ Public (Anyone Can Register)
 
 		// Protected User Routes
 		userGroup.Use(middleware.AuthMiddleware())
 		userGroup.PUT("/role/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
-		userGroup.GET("/", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
+		userGroup.GET("/all", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
 		// ✅ Requires Authentication
-		userGroup.GET("/:id", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
+		userGroup.GET("/profile", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
 		userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
 	}
 

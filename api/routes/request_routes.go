@@ -24,7 +24,7 @@ func RequestRoutes(router *gin.Engine) {
 		requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
 
 		// ✅ LibraryAdmins can view all requests
-		requestGroup.GET("/allreq", middleware.RoleMiddleware("LibraryAdmin"), controllers.GetAllRequestsForAdmin)
+		requestGroup.GET("/allreq", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllRequestsForAdmin)
 	}
 }
 

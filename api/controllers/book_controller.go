@@ -105,7 +105,7 @@ func AddBook(c *gin.Context) {
 	// Create Book using LibID from the request
 	book := models.Book{
 		ISBN:            request.ISBN,
-		LibID:           libID, // ✅ Temporary: Using `LibID` from request
+		LibID:           libID,
 		Title:           request.Title,
 		Authors:         request.Authors,
 		Publisher:       request.Publisher,

@@ -1,20 +1,20 @@
 package controllers
 
 import (
+	"github.com/gin-gonic/gin"
+	// "library-management-api/config"
 	"library-management-api/models"
 	"library-management-api/services"
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 // CreateRequest handles a reader's book request (Issue/Return)
 // CreateRequest handles a reader's book request (Issue/Return)
 func CreateRequest(c *gin.Context) {
 	var request struct {
-		BookID      string `json:"book_id" binding:"required"`
+		ISBN        string `json:"book_id" binding:"required"`
 		RequestType string `json:"request_type" binding:"required"`
 	}
 
@@ -23,6 +23,13 @@ func CreateRequest(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// var book models.Book
+	// err := config.DB.Where("isbn = ?", request.ISBN).First(&book).Error
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"messege": "book not found "})
+	// 	return
+	// }
 
 	// Validate request type
 	if request.RequestType != "Issue" && request.RequestType != "Return" {
@@ -47,7 +54,7 @@ func CreateRequest(c *gin.Context) {
 
 	// Create RequestEvent with RequestDate
 	reqEvent := models.RequestEvent{
-		BookID:      request.BookID,
+		ISBN:        request.ISBN,
 		ReaderID:    readerID, // ✅ Fixed conversion issue
 		RequestType: request.RequestType,
 		RequestDate: time.Now(),

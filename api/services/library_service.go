@@ -34,7 +34,7 @@ func CreateLibrary(owner *models.User, library *models.Library) error {
 func GetAllLibraries() ([]models.Library, error) {
 	var libraries []models.Library
 
-	if err := config.DB.Find(&libraries).Error; err != nil {
+	if err := config.DB.Preload("Users").Preload("Books").Find(&libraries).Error; err != nil {
 		return nil, errors.New("failed to fetch libraries")
 	}
 

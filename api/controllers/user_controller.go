@@ -15,8 +15,7 @@ func RegisterUser(c *gin.Context) {
 		Name          string `json:"name" binding:"required"`
 		Email         string `json:"email" binding:"required,email"`
 		Password      string `json:"password" binding:"required"`
-		ContactNumber string `json:"contact_number"`
-		Role          string `json:"role"` // Optional, defaults to "Reader"
+		ContactNumber string `json:"contact_number"  binding:"required"`
 		LibID         uint   `json:"lib_id" binding:"required"`
 	}
 
@@ -103,7 +102,20 @@ func RegisterUser(c *gin.Context) {
 
 // GetUser fetches user details by ID
 func GetUser(c *gin.Context) {
-	userID := c.Param("id")
+	useridinterface, exist := c.Get("user_id")
+	if !exist {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "not authenticated"})
+		return
+	}
+
+	libidfloat, ok := useridinterface.(float64)
+
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format "})
+		return
+	}
+
+	userID := uint(libidfloat)
 
 	user, err := services.GetUserByID(userID)
 	if err != nil {
@@ -112,16 +124,7 @@ func GetUser(c *gin.Context) {
 	}
 
 	// Success Response (Hiding Password)
-	c.JSON(http.StatusOK, gin.H{
-		"user": gin.H{
-			"id":             user.ID,
-			"name":           user.Name,
-			"email":          user.Email,
-			"contact_number": user.ContactNumber,
-			"role":           user.Role,
-			"lib_id":         user.LibID,
-		},
-	})
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func GetUsersByLibrary(c *gin.Context) {
@@ -160,7 +163,10 @@ func MakeAdmin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	if request.Role != "LibraryAdmin" && request.Role != "Reader" {
+		c.JSON(http.StatusBadRequest, gin.H{"messege": "not valid role"})
+		return
+	}
 	user, err := services.MakeAdmin(userid, request.Role)
 
 	if err != nil {
@@ -174,7 +180,8 @@ func DeleteUser(c *gin.Context) {
 
 	err := services.DeleteUser(userid)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Service not called"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found "})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "user deleted succesfully"})
