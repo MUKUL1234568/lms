@@ -5,7 +5,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  cmd = "go build -o tmp/main.exe ./cmd/main.go"  # Correct build command
+  cmd = "go build -o tmp/main.exe ./main.go"  # Correct build command
   bin = "tmp/main.exe"  # Correct binary name for Windows
 
   delay = 1000

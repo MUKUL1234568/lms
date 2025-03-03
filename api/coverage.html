@@ -1,0 +1,1968 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>config: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">library-management-api/config/config.go (28.6%)</option>
+				
+				<option value="file1">library-management-api/config/db.go (0.0%)</option>
+				
+				<option value="file2">library-management-api/controllers/auth_controller.go (26.1%)</option>
+				
+				<option value="file3">library-management-api/controllers/book_controller.go (0.0%)</option>
+				
+				<option value="file4">library-management-api/controllers/issue_registry_controller.go (0.0%)</option>
+				
+				<option value="file5">library-management-api/controllers/library_controller.go (0.0%)</option>
+				
+				<option value="file6">library-management-api/controllers/request_controller.go (0.0%)</option>
+				
+				<option value="file7">library-management-api/controllers/user_controller.go (0.0%)</option>
+				
+				<option value="file8">library-management-api/main.go (0.0%)</option>
+				
+				<option value="file9">library-management-api/middleware/auth_middleware.go (0.0%)</option>
+				
+				<option value="file10">library-management-api/models/book.go (0.0%)</option>
+				
+				<option value="file11">library-management-api/models/issue_registry.go (0.0%)</option>
+				
+				<option value="file12">library-management-api/models/library.go (0.0%)</option>
+				
+				<option value="file13">library-management-api/models/request.go (0.0%)</option>
+				
+				<option value="file14">library-management-api/models/user.go (0.0%)</option>
+				
+				<option value="file15">library-management-api/routes/auth_routes.go (100.0%)</option>
+				
+				<option value="file16">library-management-api/routes/book_routes.go (0.0%)</option>
+				
+				<option value="file17">library-management-api/routes/issue_registry_routes.go (0.0%)</option>
+				
+				<option value="file18">library-management-api/routes/library_routes.go (0.0%)</option>
+				
+				<option value="file19">library-management-api/routes/request_routes.go (0.0%)</option>
+				
+				<option value="file20">library-management-api/routes/user_routes.go (0.0%)</option>
+				
+				<option value="file21">library-management-api/services/auth_service.go (15.8%)</option>
+				
+				<option value="file22">library-management-api/services/book_service.go (0.0%)</option>
+				
+				<option value="file23">library-management-api/services/issue_registry_service.go (0.0%)</option>
+				
+				<option value="file24">library-management-api/services/library_service.go (0.0%)</option>
+				
+				<option value="file25">library-management-api/services/request_service.go (0.0%)</option>
+				
+				<option value="file26">library-management-api/services/user_service.go (0.0%)</option>
+				
+				<option value="file27">library-management-api/validator/validator.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package config
+
+import (
+        "log"
+        "os"
+
+        "github.com/joho/godotenv"
+)
+
+// Load environment variables from .env file
+func LoadConfig() <span class="cov0" title="0">{
+        err := godotenv.Load("C:/Users/mukul/OneDrive/Desktop/lms/api/.env") // Adjust path if needed
+        if err != nil </span><span class="cov0" title="0">{
+                log.Println("⚠️  No .env file found. Using default settings.")
+        }</span> else<span class="cov0" title="0"> {
+                log.Println("✅ .env file loaded successfully.")
+        }</span>
+}
+
+// GetEnv gets the environment variable or returns a default value
+func GetEnv(key, defaultValue string) string <span class="cov8" title="1">{
+        if value, exists := os.LookupEnv(key); exists </span><span class="cov0" title="0">{
+                return value
+        }</span>
+        <span class="cov8" title="1">return defaultValue</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package config
+
+import (
+        "fmt"
+        "log"
+         
+
+        "gorm.io/driver/postgres"
+        "gorm.io/gorm"
+)
+
+var DB *gorm.DB
+
+func ConnectDB() <span class="cov0" title="0">{
+        // Load environment variables
+        LoadConfig()
+
+        // Fetch DB credentials from environment variables
+        host := GetEnv("DB_HOST", "localhost")
+        port := GetEnv("DB_PORT", "5432")
+        user := GetEnv("DB_USER", "postgres")
+        password := GetEnv("DB_PASSWORD", "password")
+        dbname := GetEnv("DB_NAME", "library_db")
+
+        dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", 
+                host, port, user, password, dbname)
+
+        var err error
+        DB, err = gorm.Open(postgres.Open(dsn), &amp;gorm.Config{})
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("❌ Failed to connect to database: %v", err)
+        }</span>
+
+        <span class="cov0" title="0">fmt.Println("✅ Connected to PostgreSQL database")</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controllers
+
+import (
+        "errors"
+        "library-management-api/services"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+// Login handles user authentication
+func Login(c *gin.Context) <span class="cov8" title="1">{
+        var request struct {
+                Email    string `json:"email" binding:"required,email"`
+                Password string `json:"password" binding:"required"`
+        }
+
+        // Bind JSON request
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Authenticate user
+        <span class="cov8" title="1">token, err := services.Login(request.Email, request.Password)
+        if err != nil </span><span class="cov8" title="1">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "message": "Login successful",
+                "token":   token,
+        })</span>
+}
+
+func GetUserID(c *gin.Context) (uint, error) <span class="cov0" title="0">{
+        userIDInterface, exists := c.Get("user_id")
+        if !exists </span><span class="cov0" title="0">{
+                return 0, errors.New("user not authenticated")
+        }</span>
+
+        // Convert interface{} to float64, then to uint
+        <span class="cov0" title="0">userIDFloat, ok := userIDInterface.(float64)
+        if !ok </span><span class="cov0" title="0">{
+                return 0, errors.New("invalid user ID format")
+        }</span>
+
+        <span class="cov0" title="0">return uint(userIDFloat), nil</span>
+}
+func GetLibraryID(c *gin.Context) (uint, error) <span class="cov0" title="0">{
+        libIDInterface, exists := c.Get("lib_id")
+        if !exists </span><span class="cov0" title="0">{
+                return 0, errors.New("library not found in session")
+        }</span>
+
+        // Convert interface{} to float64, then to uint
+        <span class="cov0" title="0">libIDFloat, ok := libIDInterface.(float64)
+        if !ok </span><span class="cov0" title="0">{
+                return 0, errors.New("invalid library ID format")
+        }</span>
+
+        <span class="cov0" title="0">return uint(libIDFloat), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controllers
+
+import (
+        // "fmt"
+        "fmt"
+        "library-management-api/models"
+        "library-management-api/services"
+        "library-management-api/validator"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+import "strings"
+
+func IsBook(books []models.Book, isbn string) *models.Book <span class="cov0" title="0">{
+        isbn = strings.TrimSpace(strings.ToLower(isbn)) // Normalize input
+        for i := range books </span><span class="cov0" title="0">{
+                fmt.Println(books[i].ISBN)
+                if strings.TrimSpace(strings.ToLower(books[i].ISBN)) == isbn </span><span class="cov0" title="0">{
+                        return &amp;books[i]
+                }</span>
+        }
+        <span class="cov0" title="0">return nil</span>
+}
+
+func AddBook(c *gin.Context) <span class="cov0" title="0">{
+        var request struct {
+                ISBN        string `json:"isbn" binding:"required"`
+                Title       string `json:"title" binding:"required"`
+                Authors     string `json:"authors" binding:"required"`
+                Publisher   string `json:"publisher" binding:"required"`
+                Version     string `json:"version"`
+                TotalCopies int    `json:"total_copies" binding:"required"`
+        }
+
+        // Bind JSON request
+
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">if err := validator.Validateisbn(request.ISBN); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span> // ✅ Convert float64 to uint
+
+        // Create Book using LibID from the request
+
+        <span class="cov0" title="0">books, err := services.GetBooksByLibrary(libID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">fmt.Println(books)
+        fmt.Println(request.ISBN)
+        bookk := IsBook(books, request.ISBN)
+
+        fmt.Println(bookk)
+        if bookk != nil </span><span class="cov0" title="0">{
+                // ✅ Update total_copies and available_copies in the database
+                err := services.UpdateBookCopies(request.ISBN, request.TotalCopies)
+                if err != nil </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update book copies"})
+                        return
+                }</span>
+                <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "Book copies updated successfully", "Updated book": books})
+                return</span>
+        }
+
+        <span class="cov0" title="0">book := models.Book{
+                ISBN:            request.ISBN,
+                LibID:           libID,
+                Title:           request.Title,
+                Authors:         request.Authors,
+                Publisher:       request.Publisher,
+                Version:         request.Version,
+                TotalCopies:     request.TotalCopies,
+                AvailableCopies: request.TotalCopies,
+        }
+
+        // Call service to add book
+        if err := services.AddBook(&amp;book); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusCreated, gin.H{
+                "message": "Book added successfully",
+                "book":    book,
+        })</span>
+}
+
+// GetBooksByLibrary retrieves all books for a specific library
+func GetBooksByLibrary(c *gin.Context) <span class="cov0" title="0">{
+
+        libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">books, err := services.GetBooksByLibrary(libID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"books": books})</span>
+}
+
+// GetBookByISBN retrieves a single book by ISBN
+func GetBookByISBN(c *gin.Context) <span class="cov0" title="0">{
+        isbn := c.Param("isbn")
+
+        // Call service to fetch book
+        book, err := services.GetBookByISBN(isbn)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if book.LibID != libID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusForbidden, gin.H{"error": "you are not registred in this library"})
+                return
+        }</span>
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"book": book})</span>
+}
+
+// UpdateBook handles updating book details
+func UpdateBook(c *gin.Context) <span class="cov0" title="0">{
+        isbn := c.Param("isbn")
+        var updatedBook models.Book
+
+        // Bind JSON request
+        if err := c.ShouldBindJSON(&amp;updatedBook); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">book, err := services.GetBookByISBN(isbn)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+                return
+        }</span>
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if book.LibID != libID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusForbidden, gin.H{"error": "you are not registred in this library"})
+                return
+        }</span>
+        // Call service to update book
+        <span class="cov0" title="0">if err := services.UpdateBook(isbn, &amp;updatedBook); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "Book updated successfully"})</span>
+}
+
+// DeleteBook handles removing a book from the library
+func DeleteBook(c *gin.Context) <span class="cov0" title="0">{
+        isbn := c.Param("isbn")
+
+        // Call service to delete book
+        book, err := services.GetBookByISBN(isbn)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+                return
+        }</span>
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if book.LibID != libID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "you are not registred in this library"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := services.DeleteBook(isbn); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": " One copies of book deleted successfully"})</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package controllers
+
+import (
+        "library-management-api/services"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+// GetAllIssuedBooks retrieves all issued books (Only for LibraryAdmin)
+func GetAllIssuedBooks(c *gin.Context) <span class="cov0" title="0">{
+        // Check if the user is a LibraryAdmin
+
+        issuedBooks, err := services.GetAllIssuedBooks()
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
+}
+
+// GetIssuedBooksByReader retrieves issued books for a specific reader
+func GetIssuedBooksByReader(c *gin.Context) <span class="cov0" title="0">{
+        // Get user_id from session
+        readerIDInterface, exists := c.Get("user_id")
+        if !exists </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+                return
+        }</span>
+
+        // Convert interface{} to uint
+        <span class="cov0" title="0">readerIDFloat, ok := readerIDInterface.(float64)
+        if !ok </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+                return
+        }</span>
+        <span class="cov0" title="0">readerID := uint(readerIDFloat)
+
+        // Fetch issued books for this reader
+        issuedBooks, err := services.GetIssuedBooksByReader(readerID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package controllers
+
+import (
+        "fmt"
+        "github.com/gin-gonic/gin"
+        "golang.org/x/crypto/bcrypt"
+        "library-management-api/models"
+        "library-management-api/services"
+        "library-management-api/validator"
+        "net/http"
+)
+
+// func validatephonenumbr(con_num string) error {
+//         re := regexp.MustCompile(`^\d{10}$`)
+//         if !re.MatchString(con_num) {
+//                 return errors.New("contact number should be of 10 digit ")
+//         }
+//         return nil
+// }
+
+// CreateLibrary handles the creation of a new library with an owner
+func CreateLibrary(c *gin.Context) <span class="cov0" title="0">{
+        var request struct {
+                LibraryName   string `json:"library_name" binding:"required"`
+                OwnerName     string `json:"owner_name" binding:"required"`
+                OwnerEmail    string `json:"owner_email" binding:"required,email"`
+                OwnerPassword string `json:"owner_password" binding:"required"`
+                OwnerContact  string `json:"owner_contact" binding :"required"`
+        }
+
+        // Bind JSON request
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := validator.Validatephonenumbr(request.OwnerContact); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // ✅ Hash the Password before storing it
+        <span class="cov0" title="0">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.OwnerPassword), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+                return
+        }</span>
+
+        // Create User (Owner)
+        <span class="cov0" title="0">owner := models.User{
+                Name:          request.OwnerName,
+                Email:         request.OwnerEmail,
+                Password:      string(hashedPassword), // ✅ Store hashed password
+                ContactNumber: request.OwnerContact,
+                Role:          "Owner", // ✅ Default role as Owner
+        }
+
+        // Create Library
+        library := models.Library{
+                Name: request.LibraryName,
+        }
+
+        fmt.Println("ok") // Debug print
+
+        // Call Service
+        // Call Service
+        err = services.CreateLibrary(&amp;owner, &amp;library)
+        if err != nil </span><span class="cov0" title="0">{
+                if err.Error() == "user with this email already exists" </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+                }</span> else<span class="cov0" title="0"> {
+                        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                }</span>
+                <span class="cov0" title="0">return</span>
+        }
+
+        // Success Response
+        <span class="cov0" title="0">c.JSON(http.StatusCreated, gin.H{
+                "message": "Library created successfully",
+                "library": library,
+                "owner":   owner,
+        })</span>
+}
+
+func GetLibraries(c *gin.Context) <span class="cov0" title="0">{
+        libraries, err := services.GetAllLibraries()
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"libraries": libraries})</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package controllers
+
+import (
+        "fmt"
+
+        "github.com/gin-gonic/gin"
+        // "library-management-api/config"
+        "library-management-api/models"
+        "library-management-api/services"
+        "net/http"
+        "strconv"
+        "time"
+)
+
+// CreateRequest handles a reader's book request (Issue/Return)
+// CreateRequest handles a reader's book request (Issue/Return)
+
+func HasPendingRequest(user *models.User, isbn string) bool <span class="cov0" title="0">{
+        for _, req := range user.Requests </span><span class="cov0" title="0">{
+                if req.ISBN == isbn &amp;&amp; req.Status == "pending" </span><span class="cov0" title="0">{
+                        return true
+                }</span>
+        }
+        <span class="cov0" title="0">return false</span>
+}
+
+func HasIssuedBook(user *models.User, isbn string) bool <span class="cov0" title="0">{
+        for _, req := range user.IssueRecords </span><span class="cov0" title="0">{
+                if req.ISBN == isbn &amp;&amp; req.IssueStatus == "Issued" </span><span class="cov0" title="0">{
+                        return true
+                }</span>
+        }
+        <span class="cov0" title="0">return false</span>
+}
+
+func CreateRequest(c *gin.Context) <span class="cov0" title="0">{
+        var request struct {
+                ISBN        string `json:"isbn" binding:"required"`
+                RequestType string `json:"request_type" binding:"required"`
+        }
+
+        // Bind JSON request
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">readerID, err := GetUserID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">user, errr := services.GetUserByID(readerID)
+        if errr != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if HasPendingRequest(user, request.ISBN) </span><span class="cov0" title="0">{
+                c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already request for this book wait for admin action"})
+                return
+        }</span>
+        <span class="cov0" title="0">if request.RequestType != "Return" </span><span class="cov0" title="0">{
+                if HasIssuedBook(user, request.ISBN) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have  already  this book"})
+                        return
+                }</span>
+        }
+
+        <span class="cov0" title="0">if request.RequestType == "Return" </span><span class="cov0" title="0">{
+                if !HasIssuedBook(user, request.ISBN) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have not this book to return "})
+                        return
+                }</span>
+        }
+        <span class="cov0" title="0">book, err := services.GetBookByISBN(request.ISBN)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if libID != book.LibID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusForbidden, gin.H{"error": "not registred with same library"})
+                return
+        }</span>
+        // Create RequestEvent with RequestDate
+        <span class="cov0" title="0">reqEvent := models.RequestEvent{
+                ISBN:        request.ISBN,
+                ReaderID:    readerID, // ✅ Fixed conversion issue
+                RequestType: request.RequestType,
+                RequestDate: time.Now(),
+                Status:      "pending",
+        }
+
+        // Call service to create request
+        if err := services.CreateRequest(&amp;reqEvent); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusCreated, gin.H{
+                "message": "Request submitted successfully",
+                "request": reqEvent,
+        })</span>
+}
+
+// ApproveRequest handles approval or rejection of a book request
+// ApproveRequest handles approval or rejection of a book request
+func ApproveRequest(c *gin.Context) <span class="cov0" title="0">{
+        // Parse request ID from URL
+        requestID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request ID"})
+                return
+        }</span>
+
+        // Parse JSON body
+        <span class="cov0" title="0">var request struct {
+                Approve bool `json:"approve" binding:"required"`
+        }
+
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">ApproverID, err := GetUserID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Fetch the request from DB
+        <span class="cov0" title="0">var reqEvent models.RequestEvent
+        if err := services.GetRequestByID(uint(requestID), &amp;reqEvent); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Request not found"})
+                return
+        }</span>
+        <span class="cov0" title="0">fmt.Println(libID, reqEvent.Book.LibID)
+        if libID != reqEvent.Book.LibID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": "not authorized to approve this request"})
+                return
+        }</span>
+        // If approving, set approval date and approver ID
+        <span class="cov0" title="0">if request.Approve </span><span class="cov0" title="0">{
+                now := time.Now()
+                reqEvent.ApprovalDate = &amp;now
+                reqEvent.ApproverID = &amp;ApproverID // ✅ Fix: Use a pointer
+        }</span>
+
+        // Call service to approve/reject request
+        <span class="cov0" title="0">err = services.ApproveRequest(&amp;reqEvent, request.Approve)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "message": "Request processed successfully",
+                "request": reqEvent,
+        })</span>
+}
+
+// GetUserRequests fetches all requests made by the logged-in user
+func GetUserRequests(c *gin.Context) <span class="cov0" title="0">{
+        // Get `ReaderID` from session (logged-in user)
+
+        readerID, err := GetUserID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Call service to fetch user requests
+        <span class="cov0" title="0">requests, err := services.GetUserRequests(readerID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
+}
+
+func GetAllRequestsForAdmin(c *gin.Context) <span class="cov0" title="0">{
+        // // Get `Role` from session (logged-in user)
+        // role, exists := c.Get("role")
+        // if !exists || role != "LibraryAdmin" {
+        //         c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
+        //         return
+        // }
+
+        // Call service to fetch all requests
+
+        libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">requests, err := services.GetAllRequests(libID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package controllers
+
+import (
+        "fmt"
+        "github.com/gin-gonic/gin"
+        "golang.org/x/crypto/bcrypt"
+        "library-management-api/models"
+        "library-management-api/services"
+        "library-management-api/validator"
+        "net/http"
+        "strconv"
+)
+
+// RegisterUser handles user registration
+func RegisterUser(c *gin.Context) <span class="cov0" title="0">{
+        var request struct {
+                Name          string `json:"name" binding:"required"`
+                Email         string `json:"email" binding:"required,email"`
+                Password      string `json:"password" binding:"required"`
+                ContactNumber string `json:"contact_number"  binding:"required"`
+                LibID         uint   `json:"lib_id" binding:"required,numeric"`
+        }
+
+        // Bind JSON request
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := validator.Validatephonenumbr(request.ContactNumber); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">fmt.Println(request.LibID)
+        err := services.Getlibbyid(request.LibID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "library not exsits"})
+                return
+        }</span>
+
+        // Hash the password before storing
+        <span class="cov0" title="0">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+                return
+        }</span>
+
+        // Set default role as "Reader"
+        <span class="cov0" title="0">userRole := "Reader"
+
+        // Create User
+        user := models.User{
+                Name:          request.Name,
+                Email:         request.Email,
+                Password:      string(hashedPassword),
+                ContactNumber: request.ContactNumber,
+                Role:          userRole,
+                LibID:         request.LibID,
+        }
+
+        // Call Service to Register User
+        err = services.RegisterUser(&amp;user)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success Response (Hiding Password for Security)
+        <span class="cov0" title="0">c.JSON(http.StatusCreated, gin.H{
+                "message": "User registered successfully",
+                "user": gin.H{
+                        "id":             user.ID,
+                        "name":           user.Name,
+                        "email":          user.Email,
+                        "contact_number": user.ContactNumber,
+                        "role":           user.Role,
+                        "lib_id":         user.LibID,
+                },
+        })</span>
+}
+
+// GetUser fetches user details by ID
+func GetUser(c *gin.Context) <span class="cov0" title="0">{
+        userID, err := GetUserID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">user, err := services.GetUserByID(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+                return
+        }</span>
+
+        // Success Response (Hiding Password)
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"user": user})</span>
+}
+
+func GetUsersByLibrary(c *gin.Context) <span class="cov0" title="0">{
+        libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Call service to fetch books
+        <span class="cov0" title="0">users, err := services.GetUsersByLibrary(libID)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        // Success response
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"users": users})</span>
+}
+
+func MakeAdmin(c *gin.Context) <span class="cov0" title="0">{
+        useridstr := c.Param("id")
+
+        userid64, err := strconv.ParseUint(useridstr, 10, 32)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(400, gin.H{"error": "Invalid ID"})
+                return
+        }</span>
+        <span class="cov0" title="0">userid := uint(userid64)
+
+        var request struct {
+                Role string `json:"role" binding:"required"`
+        }
+
+        if err := c.ShouldBindJSON(&amp;request); err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">if request.Role != "LibraryAdmin" &amp;&amp; request.Role != "Reader" </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"messege": "not valid role"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">userc, err := services.GetUserByID(userid)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+                return
+        }</span>
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov0" title="0">if userc.LibID != libID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+                return
+        }</span>
+        <span class="cov0" title="0">user, err := services.MakeAdmin(userid, request.Role)
+
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "service is not initiated "})
+        }</span>
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"admin": user})</span>
+}
+
+func DeleteUser(c *gin.Context) <span class="cov0" title="0">{
+        useridstr := c.Param("id")
+
+        userid64, err := strconv.ParseUint(useridstr, 10, 32)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(400, gin.H{"error": "Invalid ID"})
+                return
+        }</span>
+        <span class="cov0" title="0">userid := uint(userid64)
+
+        userc, err := services.GetUserByID(userid)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+                return
+        }</span>
+        <span class="cov0" title="0">if userc.LibID != libID </span><span class="cov0" title="0">{
+                c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+                return
+        }</span>
+
+        <span class="cov0" title="0">errr := services.DeleteUser(userid)
+        if errr != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "User not found "})
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "user deleted succesfully"})</span>
+
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import (
+        "fmt"
+        "library-management-api/config"
+        "library-management-api/models"
+        "library-management-api/routes"
+
+        "github.com/gin-gonic/gin"
+)
+
+func main() <span class="cov0" title="0">{
+        // Load environment variables
+        config.LoadConfig()
+
+        // Connect to the database
+        config.ConnectDB()
+        db := config.DB
+
+        // Run database migrations
+        models.MigrateLibrary(db)
+        models.MigrateUser(db)
+        models.MigrateBook(db)
+        models.MigrateRequestEvent(db)
+        models.MigrateIssueRegistry(db)
+
+        println("✅ Database Migrations Completed")
+
+        // Initialize Gin Router
+        router := gin.Default()
+        router.Use(CORSMiddleware())
+        // router.Use(cors.New(cors.Config{
+        //         AllowOrigins:     []string{"http://localhost:5173"}, // ✅ Allow frontend origin
+        //         AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        //         AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+        //         ExposeHeaders:    []string{"Content-Length"},
+        //         AllowCredentials: true,           // Allow cookies and credentials to be sent
+        //         MaxAge:           12 * time.Hour, // Max Age for CORS preflight requests
+        // }))
+
+        routes.AuthRoutes(router)
+        routes.LibraryRoutes(router) // ✅ Register library routes
+        routes.UserRoutes(router)    // ✅ User Routes
+        routes.BookRoutes(router)
+        routes.RequestRoutes(router)
+        routes.IssueRegistryRoutes(router)
+
+        // Start the server
+        router.Run(":8080") // Run server on port 8080
+}</span>
+
+func CORSMiddleware() gin.HandlerFunc <span class="cov0" title="0">{
+        fmt.Println("cors ")
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                fmt.Println("header set")
+                c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+                c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+                c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+                c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+
+                if c.Request.Method == "OPTIONS" </span><span class="cov0" title="0">{
+                        c.AbortWithStatus(204)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.Next()</span>
+        }
+
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package middleware
+
+import (
+        "fmt"
+        "library-management-api/services"
+        "net/http"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+)
+
+// AuthMiddleware checks if the user is authenticated
+func AuthMiddleware() gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                tokenString := c.GetHeader("Authorization")
+
+                // Check if token is missing
+                if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+                        c.Abort()
+                        return
+                }</span>
+
+                // Extract token value
+                <span class="cov0" title="0">tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+                // Parse JWT token
+                claims, err := services.ParseJWT(tokenString)
+                if err != nil </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+                        c.Abort()
+                        return
+                }</span>
+
+                // Set user info in context
+                <span class="cov0" title="0">c.Set("user_id", claims["user_id"])
+                c.Set("email", claims["email"])
+                c.Set("role", claims["role"])
+                c.Set("lib_id", claims["lib_id"])
+
+                c.Next()</span>
+        }
+}
+
+// RoleMiddleware restricts access based on user role
+func RoleMiddleware(requiredRole string) gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                role, exists := c.Get("role")
+                fmt.Println((role))
+                if !exists || role != requiredRole </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
+                        c.Abort()
+                        return
+                }</span>
+                <span class="cov0" title="0">c.Next()</span>
+        }
+}
+
+// RoleMiddlewareMultiple allows multiple roles to access an endpoint
+func RoleMiddlewareMultiple(allowedRoles []string) gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                role, exists := c.Get("role")
+                if !exists </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+                        c.Abort()
+                        return
+                }</span>
+
+                // Check if the user's role is in the allowed list
+                <span class="cov0" title="0">for _, allowedRole := range allowedRoles </span><span class="cov0" title="0">{
+                        if role == allowedRole </span><span class="cov0" title="0">{
+                                c.Next()
+                                return
+                        }</span>
+                }
+
+                <span class="cov0" title="0">c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
+                c.Abort()</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package models
+
+import "gorm.io/gorm"
+
+type Book struct {
+        ISBN            string          `gorm:"primaryKey" json:"isbn"`
+        LibID           uint            `gorm:"not null" json:"lib_id"`
+        Title           string          `gorm:"not null" json:"title"`
+        Authors         string          `gorm:"not null" json:"authors"`
+        Publisher       string          `gorm:"not null" json:"publisher"`
+        Version         string          `json:"version,omitempty"`
+        TotalCopies     int             `gorm:"not null" json:"total_copies"`
+        AvailableCopies int             `gorm:"not null" json:"available_copies"`
+        IssueRecords    []IssueRegistry `gorm:"foreignKey:ISBN" json:"issue_records"`
+        Requests        []RequestEvent  `gorm:"foreignKey:ISBN" json:"requests"`
+}
+
+// Migrate Book table
+func MigrateBook(db *gorm.DB) <span class="cov0" title="0">{
+        db.AutoMigrate(&amp;Book{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package models
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type IssueRegistry struct {
+        IssueID          uint       `gorm:"primaryKey;autoIncrement" json:"issue_id"`
+        ISBN             string     `gorm:"not null" json:"isbn"`
+        ReaderID         uint       `gorm:"not null" json:"reader_id"`
+        IssueApproverID  *uint      `json:"issue_approver_id,omitempty"`
+        IssueStatus      string     `gorm:"not null" json:"issue_status"`
+        IssueDate        time.Time  `gorm:"not null" json:"issue_date"`
+        ExpectedReturn   *time.Time `json:"expected_return_date,omitempty"`
+        ReturnDate       *time.Time `json:"return_date,omitempty"`
+        ReturnApproverID *uint      `json:"return_approver_id,omitempty"`
+
+        // Relationships
+        Book Book `gorm:"foreignKey:ISBN;references:ISBN" json:"book"`
+        User User `gorm:"foreignKey:ReaderID;references:ID" json:"user"`
+}
+
+// Migrate IssueRegistry table
+func MigrateIssueRegistry(db *gorm.DB) <span class="cov0" title="0">{
+        db.AutoMigrate(&amp;IssueRegistry{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package models
+
+import "gorm.io/gorm"
+
+type Library struct {
+        ID   uint   `gorm:"primaryKey;autoIncrement" json:"id"`
+        Name string `gorm:"unique;not null" json:"name"`
+
+        Users []User `gorm:"foreignKey:LibID" json:"users"` // One library has many users
+        Books []Book `gorm:"foreignKey:LibID" json:"books"` // One library has many books
+}
+
+// Migrate Library table
+func MigrateLibrary(db *gorm.DB) <span class="cov0" title="0">{
+        db.AutoMigrate(&amp;Library{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package models
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type RequestEvent struct {
+        ReqID        uint       `gorm:"primaryKey;autoIncrement" json:"req_id"`
+        ISBN         string     `gorm:"not null" json:"isbn"` // Changed from BookID to ISBN
+        ReaderID     uint       `gorm:"not null" json:"reader_id"`
+        RequestDate  time.Time  `gorm:"not null" json:"request_date"`
+        ApprovalDate *time.Time `json:"approval_date,omitempty"`      // Nullable
+        ApproverID   *uint      `json:"approver_id,omitempty"`        // Nullable
+        RequestType  string     `gorm:"not null" json:"request_type"` // "Issue" or "Return"
+        Status       string     `gorm:"not null" json:"status"`
+
+        // Relationships
+        Book Book `gorm:"foreignKey:ISBN;references:ISBN" json:"book"`
+        User User `gorm:"foreignKey:ReaderID;references:ID" json:"user"`
+}
+
+// Migrate RequestEvent table
+func MigrateRequestEvent(db *gorm.DB) <span class="cov0" title="0">{
+        db.AutoMigrate(&amp;RequestEvent{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package models
+
+import (
+        "gorm.io/gorm"
+)
+
+type User struct {
+        ID            uint            `gorm:"primaryKey;autoIncrement" json:"id"`
+        Name          string          `gorm:"not null"  json:"name"`
+        Email         string          `gorm:"unique;not null"  json:"email"`
+        Password      string          `gorm:"not null" json:"-"`
+        ContactNumber string          `gorm:"not null" json:"contact_number"`
+        Role          string          `gorm:"not null" json:"role"` // Owner, LibraryAdmin, Reader
+        LibID         uint            `gorm:"not null" json:"lib_id"`
+        IssueRecords  []IssueRegistry `gorm:"foreignKey:ReaderID" json:"issue_records"`
+        Requests      []RequestEvent  `gorm:"foreignKey:ReaderID" json:"requests"`
+}
+
+// Migrate User table
+func MigrateUser(db *gorm.DB) <span class="cov0" title="0">{
+        db.AutoMigrate(&amp;User{})
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package routes
+
+import (
+        "library-management-api/controllers"
+
+        "github.com/gin-gonic/gin"
+)
+
+// AuthRoutes registers authentication-related routes
+func AuthRoutes(router *gin.Engine) <span class="cov8" title="1">{
+        authGroup := router.Group("/auth")
+        </span><span class="cov8" title="1">{
+                authGroup.POST("/login", controllers.Login) // ✅ User Login
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package routes
+
+import (
+        "github.com/gin-gonic/gin"
+        "library-management-api/controllers"
+        "library-management-api/middleware"
+)
+
+// BookRoutes registers book-related routes
+func BookRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        bookGroup := router.Group("/books")
+        </span><span class="cov0" title="0">{
+                // ✅ Public Route (Anyone Can View Books)
+
+                bookGroup.Use(middleware.AuthMiddleware())
+                bookGroup.GET("/:isbn", controllers.GetBookByISBN)
+                bookGroup.GET("/lib", controllers.GetBooksByLibrary)
+
+                protected := bookGroup.Group("/")
+                protected.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
+                protected.POST("/", controllers.AddBook)
+                protected.PUT("/:isbn", controllers.UpdateBook)
+                protected.DELETE("/:isbn", controllers.DeleteBook)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package routes
+
+import (
+        "library-management-api/controllers"
+        "library-management-api/middleware"
+
+        "github.com/gin-gonic/gin"
+)
+
+// IssueRegistryRoutes registers routes for issued books
+func IssueRegistryRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        issueGroup := router.Group("/issueregistry")
+        </span><span class="cov0" title="0">{
+                // Protect all routes with authentication
+                issueGroup.Use(middleware.AuthMiddleware())
+
+                // ✅ LibraryAdmin can see all issued books
+                issueGroup.GET("/admin", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllIssuedBooks)
+
+                // ✅ Readers can see their issued books
+                issueGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetIssuedBooksByReader)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package routes
+
+import (
+        "library-management-api/controllers"
+        // "library-management-api/middleware"
+
+        "github.com/gin-gonic/gin"
+)
+
+// LibraryRoutes registers routes for Library
+func LibraryRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        libGroup := router.Group("/libraries")
+        </span><span class="cov0" title="0">{
+                libGroup.POST("/", controllers.CreateLibrary) // ✅ Create Library with Owner
+                libGroup.GET("/", controllers.GetLibraries)   // ✅ Add this in your routes
+
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package routes
+
+import (
+        "library-management-api/controllers"
+        "library-management-api/middleware"
+
+        "github.com/gin-gonic/gin"
+)
+
+// RequestRoutes registers book request routes
+func RequestRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        requestGroup := router.Group("/requests")
+        </span><span class="cov0" title="0">{
+                // Protect all request routes with authentication
+                requestGroup.Use(middleware.AuthMiddleware())
+
+                // ✅ Only Readers can create book requests (Issue/Return)
+                requestGroup.POST("/", middleware.RoleMiddleware("Reader"), controllers.CreateRequest)
+
+                // ✅ Only LibraryAdmins can approve/reject requests
+                requestGroup.PUT("/:id/approve", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.ApproveRequest)
+
+                // ✅ Readers can view their own requests
+                requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
+
+                // ✅ LibraryAdmins can view all requests
+                requestGroup.GET("/allreq", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllRequestsForAdmin)
+        }</span>
+}
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwiZXhwIjoxNzQwNDU4OTA2LCJyb2xlIjoiTGlicmFyeUFkbWluIiwidXNlcl9pZCI6NH0.7I2mgOp1aTKkYKrAYJVEsrNhZu_WUbqGHXBQ1AiWX1Q
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package routes
+
+import (
+        "library-management-api/controllers"
+        "library-management-api/middleware"
+
+        "github.com/gin-gonic/gin"
+)
+
+// UserRoutes registers user-related routes
+func UserRoutes(router *gin.Engine) <span class="cov0" title="0">{
+        userGroup := router.Group("/user")
+        </span><span class="cov0" title="0">{
+                userGroup.POST("/register", controllers.RegisterUser) // ✅ Public (Anyone Can Register)
+
+                // Protected User Routes
+                userGroup.Use(middleware.AuthMiddleware())
+                userGroup.PUT("/role/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
+                userGroup.GET("/all", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
+                // ✅ Requires Authentication
+                userGroup.GET("/profile", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
+                userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
+        }</span>
+
+}
+
+// {"isbn": "978-0134190440",
+// "lib_id": 1,
+// "title": "The Go Programming Language",
+// "authors": "Alan A. A. Donovan, Brian W. Kernighan",
+// "publisher": "Addison-Wesley",
+// "version": "1st Edition",
+// "total_copies": 5,
+// "available_copies": 7
+// }
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package services
+
+import (
+        "errors"
+
+        "library-management-api/config"
+        "library-management-api/models"
+        "time"
+
+        "github.com/golang-jwt/jwt/v4"
+        "golang.org/x/crypto/bcrypt"
+)
+
+// JWT Secret Key (Replace with ENV variable in production)
+var secretkey = config.GetEnv("SECRET_KEY", "kjskd")
+var jwtSecret = []byte(secretkey)
+
+// Login authenticates user and generates a JWT token
+func Login(email, password string) (string, error) <span class="cov8" title="1">{
+        var user models.User
+        if err := config.DB.Where("email = ?", email).First(&amp;user).Error; err != nil </span><span class="cov8" title="1">{
+                return "", errors.New("invalid credentials")
+        }</span>
+
+        // Compare hashed password
+        <span class="cov0" title="0">if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil </span><span class="cov0" title="0">{
+                return "", errors.New("invalid password")
+        }</span>
+
+        // Generate JWT token
+        <span class="cov0" title="0">token, err := generateJWT(user)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+
+        <span class="cov0" title="0">return token, nil</span>
+}
+
+// generateJWT creates a JWT token with user information
+func generateJWT(user models.User) (string, error) <span class="cov0" title="0">{
+
+        claims := jwt.MapClaims{
+                "user_id": user.ID,
+                "email":   user.Email,
+                "role":    user.Role,
+                "exp":     time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours
+                "lib_id":  user.LibID,
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString(jwtSecret)
+}</span>
+
+// ParseJWT extracts user claims from a JWT token
+func ParseJWT(tokenString string) (jwt.MapClaims, error) <span class="cov0" title="0">{
+        token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                return jwtSecret, nil
+        }</span>)
+
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">if claims, ok := token.Claims.(jwt.MapClaims); ok &amp;&amp; token.Valid </span><span class="cov0" title="0">{
+
+                return claims, nil
+        }</span>
+
+        <span class="cov0" title="0">return nil, errors.New("invalid token")</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package services
+
+import (
+        "errors"
+        "gorm.io/gorm"
+        "library-management-api/config"
+        "library-management-api/models"
+)
+
+// AddBook adds a new book to the library
+func AddBook(book *models.Book) error <span class="cov0" title="0">{
+        return config.DB.Create(book).Error
+}</span>
+
+// GetBooksByLibrary retrieves all books in a specific library
+func GetBooksByLibrary(libID uint) ([]models.Book, error) <span class="cov0" title="0">{
+        var books []models.Book
+        err := config.DB.Preload("IssueRecords").Preload("Requests").Where("lib_id = ?", libID).Find(&amp;books).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return books, nil</span>
+}
+
+// GetBookByISBN fetches a single book by its ISBN
+func GetBookByISBN(isbn string) (*models.Book, error) <span class="cov0" title="0">{
+        var book models.Book
+        err := config.DB.Where("isbn = ?", isbn).First(&amp;book).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("book not found")
+        }</span>
+        <span class="cov0" title="0">return &amp;book, nil</span>
+}
+
+// UpdateBook updates an existing book's details
+func UpdateBook(isbn string, updatedBook *models.Book) error <span class="cov0" title="0">{
+        var book models.Book
+        err := config.DB.Where("isbn = ?", isbn).First(&amp;book).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.New("book not found")
+        }</span>
+
+        // Update book details
+        <span class="cov0" title="0">return config.DB.Model(&amp;book).Updates(updatedBook).Error</span>
+}
+func UpdateBookCopies(isbn string, totalcopies int) error <span class="cov0" title="0">{
+        result := config.DB.Model(&amp;models.Book{}).
+                Where("isbn = ?", isbn).
+                Updates(map[string]interface{}{
+                        "total_copies":     gorm.Expr("total_copies + ?", totalcopies),
+                        "available_copies": gorm.Expr("available_copies + ?", totalcopies),
+                })
+
+        if result.Error != nil </span><span class="cov0" title="0">{
+                return result.Error
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// DeleteBook removes a book from the library
+func DeleteBook(isbn string) error <span class="cov0" title="0">{
+        var book models.Book
+
+        // Check if the book exists
+        if err := config.DB.Where("isbn = ?", isbn).First(&amp;book).Error; err != nil </span><span class="cov0" title="0">{
+                return errors.New("book not found")
+        }</span>
+
+        // If available copies &gt; 0, decrement instead of deleting
+        <span class="cov0" title="0">if book.AvailableCopies &gt; 0 </span><span class="cov0" title="0">{
+                book.AvailableCopies -= 1
+                book.TotalCopies -= 1
+                return config.DB.Save(&amp;book).Error
+
+        }</span>
+
+        // If no copies left, delete the book
+        <span class="cov0" title="0">result := config.DB.Where("isbn = ?", isbn).Delete(&amp;models.Book{})
+        if result.RowsAffected == 0 </span><span class="cov0" title="0">{
+                return errors.New("no book to delete")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package services
+
+import (
+        "library-management-api/config"
+        "library-management-api/models"
+
+        "gorm.io/gorm"
+)
+
+// GetAllIssuedBooks fetches all issued books (LibraryAdmin Only)
+func GetAllIssuedBooks() ([]models.IssueRegistry, error) <span class="cov0" title="0">{
+        var issuedBooks []models.IssueRegistry
+        err := config.DB.
+                Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+                        return db.Select("isbn, title, authors")
+                }</span>).
+                Preload("User", func(db *gorm.DB) *gorm.DB <span class="cov0" title="0">{
+                        return db.Select("id, name, email")
+                }</span>).
+                Find(&amp;issuedBooks).Error
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return issuedBooks, nil</span>
+}
+
+// GetIssuedBooksByReader fetches issued books for a specific reader
+func GetIssuedBooksByReader(readerID uint) ([]models.IssueRegistry, error) <span class="cov0" title="0">{
+        var issuedBooks []models.IssueRegistry
+        err := config.DB.Where("reader_id = ?", readerID).Find(&amp;issuedBooks).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return issuedBooks, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package services
+
+import (
+        "errors"
+        "library-management-api/config"
+        "library-management-api/models"
+)
+
+// CreateLibrary creates a new library and assigns the user as the Owner
+func CreateLibrary(owner *models.User, library *models.Library) error <span class="cov0" title="0">{
+
+        var existingUser models.User
+        if err := config.DB.Where("email = ?", owner.Email).First(&amp;existingUser).Error; err == nil </span><span class="cov0" title="0">{
+                return errors.New("user with this email already exists")
+        }</span>
+        <span class="cov0" title="0">tx := config.DB.Begin()
+
+        // Step 1: Create Library FIRST
+        if err := tx.Create(library).Error; err != nil </span><span class="cov0" title="0">{
+                tx.Rollback()
+                return errors.New("failed to create library")
+        }</span>
+
+        // Step 2: Assign Library ID to Owner
+        <span class="cov0" title="0">owner.LibID = library.ID // ✅ Correctly assigning Library ID to Owner
+        owner.Role = "Owner"     // ✅ Set Role as Owner
+
+        // Step 3: Create User (Owner)
+        if err := tx.Create(owner).Error; err != nil </span><span class="cov0" title="0">{
+                tx.Rollback()
+                return errors.New("failed to create library owner")
+        }</span>
+
+        // Commit transaction
+        <span class="cov0" title="0">tx.Commit()
+        return nil</span>
+}
+
+func GetAllLibraries() ([]models.Library, error) <span class="cov0" title="0">{
+        var libraries []models.Library
+
+        if err := config.DB.Preload("Users").Preload("Books").Find(&amp;libraries).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("failed to fetch libraries")
+        }</span>
+
+        <span class="cov0" title="0">return libraries, nil</span>
+}
+func Getlibbyid(id uint) error <span class="cov0" title="0">{
+        var library *models.Library
+        err := config.DB.Where("id=?", id).First(&amp;library).Error
+        return err
+}</span>
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package services
+
+import (
+        "errors"
+        "fmt"
+        "library-management-api/config"
+        "library-management-api/models"
+        "time"
+
+        "gorm.io/gorm"
+)
+
+// CreateRequest stores a new book request in the database
+func CreateRequest(request *models.RequestEvent) error <span class="cov0" title="0">{
+        return config.DB.Create(request).Error
+}</span>
+
+// ApproveRequest approves or rejects a book request
+func ApproveRequest(request *models.RequestEvent, approve bool) error <span class="cov0" title="0">{
+        // If rejecting, delete request and return
+        if !approve </span><span class="cov0" title="0">{
+                request.Status = "Rejected"
+                config.DB.Save(request)
+                return nil
+        }</span>
+
+        // Save approved request (ApprovalDate &amp; ApproverID already set in controller)
+        // config.DB.Save(request)
+
+        // Process request type (Issue/Return)
+        <span class="cov0" title="0">if request.RequestType == "Issue" </span><span class="cov0" title="0">{
+                // Check if book is available
+                var book models.Book
+                fmt.Println("ok")
+                if err := config.DB.Where("isbn = ?", request.ISBN).First(&amp;book).Error; err != nil </span><span class="cov0" title="0">{
+                        return errors.New("book not found")
+                }</span>
+
+                <span class="cov0" title="0">if book.AvailableCopies &lt;= 0 </span><span class="cov0" title="0">{
+                        return errors.New("no available copies")
+                }</span>
+
+                // Decrease available copies
+                <span class="cov0" title="0">book.AvailableCopies -= 1
+                config.DB.Save(&amp;book)
+
+                // ✅ Fix: Store `ExpectedReturn` as a pointer
+                expectedReturn := request.ApprovalDate.AddDate(0, 0, 14)
+
+                // ✅ Fix: Dereference `ApproverID`
+                issue := models.IssueRegistry{
+                        ISBN:            request.ISBN,
+                        ReaderID:        request.ReaderID,
+                        IssueApproverID: request.ApproverID, // ✅ Fix: Use `*request.ApproverID`
+                        IssueStatus:     "Issued",
+                        IssueDate:       *request.ApprovalDate,
+                        ExpectedReturn:  &amp;expectedReturn, // ✅ Fix: Store pointer
+                }
+                if err := config.DB.Create(&amp;issue).Error; err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov0" title="0">request.Status = "approved"
+                config.DB.Save(request)</span>
+        } else<span class="cov0" title="0"> if request.RequestType == "Return" </span><span class="cov0" title="0">{
+                // Process book return
+                var issue models.IssueRegistry
+                if err := config.DB.Where("isbn = ? AND reader_id = ? AND issue_status = 'Issued'", request.ISBN, request.ReaderID).First(&amp;issue).Error; err != nil </span><span class="cov0" title="0">{
+                        return errors.New("no active issue record found")
+                }</span>
+
+                // Mark as returned
+                <span class="cov0" title="0">now := time.Now()
+                issue.IssueStatus = "Returned"
+                issue.ReturnDate = &amp;now
+
+                // ✅ Fix: Dereference `ApproverID`
+                issue.ReturnApproverID = request.ApproverID // ✅ Fix: Use `*request.ApproverID`
+                config.DB.Save(&amp;issue)
+
+                // Increase available copies
+                var book models.Book
+                if err := config.DB.Where("isbn = ?", request.ISBN).First(&amp;book).Error; err == nil </span><span class="cov0" title="0">{
+                        book.AvailableCopies += 1
+                        config.DB.Save(&amp;book)
+                }</span>
+                <span class="cov0" title="0">request.Status = "Approved"
+                config.DB.Save(request)</span>
+        }
+
+        // Delete request after processing
+        <span class="cov0" title="0">return nil</span>
+}
+
+// GetUserRequests fetches all requests made by a user
+func GetUserRequests(readerID uint) ([]models.RequestEvent, error) <span class="cov0" title="0">{
+        var requests []models.RequestEvent
+        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+                return db.Select("isbn", "title", "publisher", "lib_id")
+        }</span>).Where("reader_id = ?", readerID).Find(&amp;requests).Error
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return requests, nil</span>
+}
+
+// GetRequestByID fetches a single request by its ID
+func GetRequestByID(requestID uint, request *models.RequestEvent) error <span class="cov0" title="0">{
+        return config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+                return db.Select("isbn", "title", "publisher", "lib_id")
+        }</span>).First(request, requestID).Error
+}
+
+// GetAllRequests fetches all requests (Only for LibraryAdmins)
+func GetAllRequests(libID uint) ([]models.RequestEvent, error) <span class="cov0" title="0">{
+        var requests []models.RequestEvent
+        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+                return db.Select("isbn", "title", "publisher", "lib_id")
+        }</span>).Preload("User", func(db *gorm.DB) *gorm.DB <span class="cov0" title="0">{
+                return db.Select("name", "email", "id")
+        }</span>).Where("lib_id=?", libID).Find(&amp;requests).Error
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return requests, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package services
+
+import (
+        "errors"
+
+        "library-management-api/config"
+        "library-management-api/models"
+)
+
+// RegisterUser adds a new user to the database
+func RegisterUser(user *models.User) error <span class="cov0" title="0">{
+        return config.DB.Create(user).Error
+}</span>
+
+// GetUserByID retrieves user details by ID
+func GetUserByID(userID uint) (*models.User, error) <span class="cov0" title="0">{
+        var user models.User
+        if err := config.DB.Preload("Requests").Preload("IssueRecords").First(&amp;user, userID).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("user not found")
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func GetUsersByLibrary(libID uint) ([]models.User, error) <span class="cov0" title="0">{
+        var users []models.User
+        err := config.DB.Preload("Requests").Preload("IssueRecords").Where("lib_id = ?", libID).Find(&amp;users).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return users, nil</span>
+}
+
+func MakeAdmin(userID uint, role string) (*models.User, error) <span class="cov0" title="0">{
+        var user models.User
+        if err := config.DB.First(&amp;user, userID).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("user not found")
+        }</span>
+        <span class="cov0" title="0">user.Role = role
+        if err := config.DB.Save(&amp;user).Error; err != nil </span><span class="cov0" title="0">{
+                return nil, errors.New("faild to save to make admin ")
+        }</span>
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+func DeleteUser(userid uint) error <span class="cov0" title="0">{
+        var user models.User
+        errr := config.DB.Find(&amp;user, userid).Error
+        if errr != nil </span><span class="cov0" title="0">{
+                return errors.New("user not found")
+        }</span>
+
+        <span class="cov0" title="0">err := config.DB.Delete(&amp;user).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return errors.New("failed to delete ")
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file27" style="display: none">package validator
+
+import (
+        "errors"
+        "regexp"
+)
+
+func Validatephonenumbr(con_num string) error <span class="cov0" title="0">{
+        re := regexp.MustCompile(`^\d{10}$`)
+        if !re.MatchString(con_num) </span><span class="cov0" title="0">{
+                return errors.New("contact number should be of 10 digit ")
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func Validateisbn(isbn string) error <span class="cov0" title="0">{
+        re := regexp.MustCompile(`^\d{13}$`)
+        if !re.MatchString(isbn) </span><span class="cov0" title="0">{
+                return errors.New("isbn should be of 13 digit")
+
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

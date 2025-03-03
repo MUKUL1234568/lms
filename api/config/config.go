@@ -9,7 +9,7 @@ import (
 
 // Load environment variables from .env file
 func LoadConfig() {
-	err := godotenv.Load("/home/xs525-mukcha/Desktop/lms/api/.env") // Adjust path if needed
+	err := godotenv.Load("C:/Users/mukul/OneDrive/Desktop/lms/api/.env") // Adjust path if needed
 	if err != nil {
 		log.Println("⚠️  No .env file found. Using default settings.")
 	} else {
