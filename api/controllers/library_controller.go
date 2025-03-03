@@ -1,23 +1,22 @@
 package controllers
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"library-management-api/models"
 	"library-management-api/services"
+	"library-management-api/validator"
 	"net/http"
-	"regexp"
 )
 
-func validatephonenumbr(con_num string) error {
-	re := regexp.MustCompile(`^\d{10}$`)
-	if !re.MatchString(con_num) {
-		return errors.New("contact number should be of 10 digit ")
-	}
-	return nil
-}
+// func validatephonenumbr(con_num string) error {
+// 	re := regexp.MustCompile(`^\d{10}$`)
+// 	if !re.MatchString(con_num) {
+// 		return errors.New("contact number should be of 10 digit ")
+// 	}
+// 	return nil
+// }
 
 // CreateLibrary handles the creation of a new library with an owner
 func CreateLibrary(c *gin.Context) {
@@ -35,7 +34,7 @@ func CreateLibrary(c *gin.Context) {
 		return
 	}
 
-	if err := validatephonenumbr(request.OwnerContact); err != nil {
+	if err := validator.Validatephonenumbr(request.OwnerContact); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

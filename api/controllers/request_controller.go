@@ -12,9 +12,27 @@ import (
 
 // CreateRequest handles a reader's book request (Issue/Return)
 // CreateRequest handles a reader's book request (Issue/Return)
+
+func HasPendingRequest(user *models.User, isbn string) bool {
+	for _, req := range user.Requests {
+		if req.ISBN == isbn && req.Status == "pending" {
+			return true
+		}
+	}
+	return false
+}
+
+func HasIssuedBook(user *models.User, isbn string) bool {
+	for _, req := range user.IssueRecords {
+		if req.ISBN == isbn && req.IssueStatus == "Issued" {
+			return true
+		}
+	}
+	return false
+}
 func CreateRequest(c *gin.Context) {
 	var request struct {
-		ISBN        string `json:"book_id" binding:"required"`
+		ISBN        string `json:"isbn" binding:"required"`
 		RequestType string `json:"request_type" binding:"required"`
 	}
 
@@ -24,34 +42,44 @@ func CreateRequest(c *gin.Context) {
 		return
 	}
 
-	// var book models.Book
-	// err := config.DB.Where("isbn = ?", request.ISBN).First(&book).Error
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"messege": "book not found "})
-	// 	return
-	// }
-
-	// Validate request type
-	if request.RequestType != "Issue" && request.RequestType != "Return" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request type"})
+	readerID, err := GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Get `ReaderID` from the session (logged-in user)
-	readerIDInterface, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Convert `interface{}` to `uint`
-	readerIDFloat, ok := readerIDInterface.(float64) // ✅ Fix: First convert to float64
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+	user, errr := services.GetUserByID(readerID)
+	if errr != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-	readerID := uint(readerIDFloat) // ✅ Fix: Convert float64 to uint
 
+	if HasPendingRequest(user, request.ISBN) {
+		c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already request for this book wait for admin action"})
+		return
+	}
+
+	if HasIssuedBook(user, request.ISBN) {
+		c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already  this book"})
+		return
+	}
+
+	book, err := services.GetBookByISBN(request.ISBN)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if libID != book.LibID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "not registred with same library"})
+		return
+	}
 	// Create RequestEvent with RequestDate
 	reqEvent := models.RequestEvent{
 		ISBN:        request.ISBN,
@@ -62,8 +90,7 @@ func CreateRequest(c *gin.Context) {
 	}
 
 	// Call service to create request
-	err := services.CreateRequest(&reqEvent)
-	if err != nil {
+	if err := services.CreateRequest(&reqEvent); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -95,19 +122,11 @@ func ApproveRequest(c *gin.Context) {
 		return
 	}
 
-	readerIDInterface, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+	readerID, err := GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Convert `interface{}` to `uint`
-	readerIDFloat, ok := readerIDInterface.(float64) // ✅ Fix: Convert to float64 first
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-		return
-	}
-	readerID := uint(readerIDFloat) // ✅ Fix: Convert float64 to uint
 
 	// Fetch the request from DB
 	var reqEvent models.RequestEvent
@@ -140,19 +159,12 @@ func ApproveRequest(c *gin.Context) {
 // GetUserRequests fetches all requests made by the logged-in user
 func GetUserRequests(c *gin.Context) {
 	// Get `ReaderID` from session (logged-in user)
-	readerIDInterface, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-		return
-	}
 
-	// Convert `interface{}` to `uint`
-	readerIDFloat, ok := readerIDInterface.(float64) // ✅ Fix: Convert to float64 first
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+	readerID, err := GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	readerID := uint(readerIDFloat) // ✅ Fix: Convert float64 to uint
 
 	// Call service to fetch user requests
 	requests, err := services.GetUserRequests(readerID)
@@ -175,7 +187,13 @@ func GetAllRequestsForAdmin(c *gin.Context) {
 
 	// Call service to fetch all requests
 
-	requests, err := services.GetAllRequests()
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	requests, err := services.GetAllRequests(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

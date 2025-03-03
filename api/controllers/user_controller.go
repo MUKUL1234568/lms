@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"fmt"
-	"library-management-api/models"
-	"library-management-api/services"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"library-management-api/models"
+	"library-management-api/services"
+	"library-management-api/validator"
+	"net/http"
+	"strconv"
 )
 
 // RegisterUser handles user registration
@@ -26,7 +27,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	if err := validatephonenumbr(request.ContactNumber); err != nil {
+	if err := validator.Validatephonenumbr(request.ContactNumber); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -78,56 +79,13 @@ func RegisterUser(c *gin.Context) {
 	})
 }
 
-// LoginUser handles user authentication
-// func LoginUser(c *gin.Context) {
-// 	var request struct {
-// 		Email    string `json:"email" binding:"required,email"`
-// 		Password string `json:"password" binding:"required"`
-// 	}
-
-// 	// Bind JSON request
-// 	if err := c.ShouldBindJSON(&request); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-
-// 	// Authenticate User
-// 	user, err := services.AuthenticateUser(request.Email, request.Password)
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-// 		return
-// 	}
-
-// 	// Success Response (Hiding Password)
-// 	c.JSON(http.StatusOK, gin.H{
-// 		"message": "Login successful",
-// 		"user": gin.H{
-// 			"id":             user.ID,
-// 			"name":           user.Name,
-// 			"email":          user.Email,
-// 			"contact_number": user.ContactNumber,
-// 			"role":           user.Role,
-// 			"lib_id":         user.LibID,
-// 		},
-// 	})
-// }
-
 // GetUser fetches user details by ID
 func GetUser(c *gin.Context) {
-	useridinterface, exist := c.Get("user_id")
-	if !exist {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "not authenticated"})
+	userID, err := GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	libidfloat, ok := useridinterface.(float64)
-
-	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format "})
-		return
-	}
-
-	userID := uint(libidfloat)
 
 	user, err := services.GetUserByID(userID)
 	if err != nil {
@@ -140,19 +98,11 @@ func GetUser(c *gin.Context) {
 }
 
 func GetUsersByLibrary(c *gin.Context) {
-	libIDInterface, exists := c.Get("lib_id") // ✅ Use lowercase "lib_id"
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-
-	// Convert interface{} to float64 first, then to uint
-	libIDFloat, ok := libIDInterface.(float64)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Library ID format"})
-		return
-	}
-	libID := uint(libIDFloat) // ✅ Convert float64 to uint
 
 	// Call service to fetch books
 	users, err := services.GetUsersByLibrary(libID)
@@ -166,7 +116,15 @@ func GetUsersByLibrary(c *gin.Context) {
 }
 
 func MakeAdmin(c *gin.Context) {
-	userid := c.Param("id")
+	useridstr := c.Param("id")
+
+	userid64, err := strconv.ParseUint(useridstr, 10, 32)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+	userid := uint(userid64)
+
 	var request struct {
 		Role string `json:"role" binding:"required"`
 	}
@@ -179,6 +137,22 @@ func MakeAdmin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"messege": "not valid role"})
 		return
 	}
+
+	userc, err := services.GetUserByID(userid)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	if userc.LibID != libID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+		return
+	}
 	user, err := services.MakeAdmin(userid, request.Role)
 
 	if err != nil {
@@ -188,10 +162,33 @@ func MakeAdmin(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	userid := c.Param("id")
+	useridstr := c.Param("id")
 
-	err := services.DeleteUser(userid)
+	userid64, err := strconv.ParseUint(useridstr, 10, 32)
 	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+	userid := uint(userid64)
+
+	userc, err := services.GetUserByID(userid)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	if userc.LibID != libID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+		return
+	}
+
+	errr := services.DeleteUser(userid)
+	if errr != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found "})
 		return
 	}

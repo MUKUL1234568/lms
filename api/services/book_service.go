@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"gorm.io/gorm"
 	"library-management-api/config"
 	"library-management-api/models"
 )
@@ -42,6 +43,19 @@ func UpdateBook(isbn string, updatedBook *models.Book) error {
 	// Update book details
 	return config.DB.Model(&book).Updates(updatedBook).Error
 }
+func UpdateBookCopies(isbn string, totalcopies int) error {
+	result := config.DB.Model(&models.Book{}).
+		Where("isbn = ?", isbn).
+		Updates(map[string]interface{}{
+			"total_copies":     gorm.Expr("total_copies + ?", totalcopies),
+			"available_copies": gorm.Expr("available_copies + ?", totalcopies),
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
 
 // DeleteBook removes a book from the library
 func DeleteBook(isbn string) error {
@@ -55,7 +69,9 @@ func DeleteBook(isbn string) error {
 	// If available copies > 0, decrement instead of deleting
 	if book.AvailableCopies > 0 {
 		book.AvailableCopies -= 1
+		book.TotalCopies -= 1
 		return config.DB.Save(&book).Error
+
 	}
 
 	// If no copies left, delete the book

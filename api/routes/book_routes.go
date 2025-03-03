@@ -1,10 +1,9 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"library-management-api/controllers"
 	"library-management-api/middleware"
-
-	"github.com/gin-gonic/gin"
 )
 
 // BookRoutes registers book-related routes
@@ -12,11 +11,13 @@ func BookRoutes(router *gin.Engine) {
 	bookGroup := router.Group("/books")
 	{
 		// ✅ Public Route (Anyone Can View Books)
+
+		bookGroup.Use(middleware.AuthMiddleware())
 		bookGroup.GET("/:isbn", controllers.GetBookByISBN)
-		bookGroup.GET("/lib", middleware.AuthMiddleware(), controllers.GetBooksByLibrary)
+		bookGroup.GET("/lib", controllers.GetBooksByLibrary)
 
 		protected := bookGroup.Group("/")
-		protected.Use(middleware.AuthMiddleware(), middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
+		protected.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
 		protected.POST("/", controllers.AddBook)
 		protected.PUT("/:isbn", controllers.UpdateBook)
 		protected.DELETE("/:isbn", controllers.DeleteBook)

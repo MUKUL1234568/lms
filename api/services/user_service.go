@@ -30,7 +30,7 @@ func GetUsersByLibrary(libID uint) ([]models.User, error) {
 	return users, nil
 }
 
-func MakeAdmin(userID string, role string) (*models.User, error) {
+func MakeAdmin(userID uint, role string) (*models.User, error) {
 	var user models.User
 	if err := config.DB.First(&user, userID).Error; err != nil {
 		return nil, errors.New("user not found")
@@ -42,7 +42,7 @@ func MakeAdmin(userID string, role string) (*models.User, error) {
 	return &user, nil
 }
 
-func DeleteUser(userid string) error {
+func DeleteUser(userid uint) error {
 	var user models.User
 	errr := config.DB.Find(&user, userid).Error
 	if errr != nil {

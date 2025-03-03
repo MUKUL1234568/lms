@@ -19,7 +19,9 @@ func CreateRequest(request *models.RequestEvent) error {
 func ApproveRequest(request *models.RequestEvent, approve bool) error {
 	// If rejecting, delete request and return
 	if !approve {
-		return config.DB.Delete(request).Error
+		request.Status = "Rejected"
+		config.DB.Save(request)
+		return nil
 	}
 
 	// Save approved request (ApprovalDate & ApproverID already set in controller)
@@ -88,7 +90,9 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 // GetUserRequests fetches all requests made by a user
 func GetUserRequests(readerID uint) ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
-	err := config.DB.Where("reader_id = ?", readerID).Find(&requests).Error
+	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
+		return db.Select("isbn", "title", "publisher")
+	}).Where("reader_id = ?", readerID).Find(&requests).Error
 	if err != nil {
 		return nil, err
 	}
@@ -101,13 +105,13 @@ func GetRequestByID(requestID uint, request *models.RequestEvent) error {
 }
 
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
-func GetAllRequests() ([]models.RequestEvent, error) {
+func GetAllRequests(libID uint) ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
 	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
 		return db.Select("isbn", "title", "publisher")
 	}).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name", "email", "id")
-	}).Find(&requests).Error
+	}).Where("lib_id=?", libID).Find(&requests).Error
 	if err != nil {
 		return nil, err
 	}
