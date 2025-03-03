@@ -25,7 +25,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 	}
 
 	// Save approved request (ApprovalDate & ApproverID already set in controller)
-	config.DB.Save(request)
+	// config.DB.Save(request)
 
 	// Process request type (Issue/Return)
 	if request.RequestType == "Issue" {
@@ -59,6 +59,9 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 		if err := config.DB.Create(&issue).Error; err != nil {
 			return err
 		}
+
+		request.Status = "approved"
+		config.DB.Save(request)
 	} else if request.RequestType == "Return" {
 		// Process book return
 		var issue models.IssueRegistry
@@ -81,17 +84,19 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 			book.AvailableCopies += 1
 			config.DB.Save(&book)
 		}
+		request.Status = "Approved"
+		config.DB.Save(request)
 	}
 
 	// Delete request after processing
-	return config.DB.Delete(request).Error
+	return nil
 }
 
 // GetUserRequests fetches all requests made by a user
 func GetUserRequests(readerID uint) ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
 	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
-		return db.Select("isbn", "title", "publisher")
+		return db.Select("isbn", "title", "publisher", "lib_id")
 	}).Where("reader_id = ?", readerID).Find(&requests).Error
 	if err != nil {
 		return nil, err
@@ -101,14 +106,16 @@ func GetUserRequests(readerID uint) ([]models.RequestEvent, error) {
 
 // GetRequestByID fetches a single request by its ID
 func GetRequestByID(requestID uint, request *models.RequestEvent) error {
-	return config.DB.First(request, requestID).Error
+	return config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
+		return db.Select("isbn", "title", "publisher", "lib_id")
+	}).First(request, requestID).Error
 }
 
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
 func GetAllRequests(libID uint) ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
 	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
-		return db.Select("isbn", "title", "publisher")
+		return db.Select("isbn", "title", "publisher", "lib_id")
 	}).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name", "email", "id")
 	}).Where("lib_id=?", libID).Find(&requests).Error

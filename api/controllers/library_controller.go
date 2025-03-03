@@ -63,9 +63,14 @@ func CreateLibrary(c *gin.Context) {
 	fmt.Println("ok") // Debug print
 
 	// Call Service
+	// Call Service
 	err = services.CreateLibrary(&owner, &library)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err.Error() == "user with this email already exists" {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 

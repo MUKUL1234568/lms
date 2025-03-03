@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	// "library-management-api/config"
 	"library-management-api/models"
@@ -30,6 +32,7 @@ func HasIssuedBook(user *models.User, isbn string) bool {
 	}
 	return false
 }
+
 func CreateRequest(c *gin.Context) {
 	var request struct {
 		ISBN        string `json:"isbn" binding:"required"`
@@ -64,12 +67,19 @@ func CreateRequest(c *gin.Context) {
 		c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already request for this book wait for admin action"})
 		return
 	}
-
-	if HasIssuedBook(user, request.ISBN) {
-		c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already  this book"})
-		return
+	if request.RequestType != "Return" {
+		if HasIssuedBook(user, request.ISBN) {
+			c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have  already  this book"})
+			return
+		}
 	}
 
+	if request.RequestType == "Return" {
+		if !HasIssuedBook(user, request.ISBN) {
+			c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have not this book to return "})
+			return
+		}
+	}
 	book, err := services.GetBookByISBN(request.ISBN)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -122,7 +132,13 @@ func ApproveRequest(c *gin.Context) {
 		return
 	}
 
-	readerID, err := GetUserID(c)
+	ApproverID, err := GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	libID, err := GetLibraryID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -134,12 +150,16 @@ func ApproveRequest(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Request not found"})
 		return
 	}
-
+	fmt.Println(libID, reqEvent.Book.LibID)
+	if libID != reqEvent.Book.LibID {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "not authorized to approve this request"})
+		return
+	}
 	// If approving, set approval date and approver ID
 	if request.Approve {
 		now := time.Now()
 		reqEvent.ApprovalDate = &now
-		reqEvent.ApproverID = &readerID // ✅ Fix: Use a pointer
+		reqEvent.ApproverID = &ApproverID // ✅ Fix: Use a pointer
 	}
 
 	// Call service to approve/reject request

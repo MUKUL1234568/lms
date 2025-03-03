@@ -12,7 +12,8 @@ import (
 )
 
 // JWT Secret Key (Replace with ENV variable in production)
-var jwtSecret = []byte("your_secret_key")
+var secretkey = config.GetEnv("SECRET_KEY", "kjskd")
+var jwtSecret = []byte(secretkey)
 
 // Login authenticates user and generates a JWT token
 func Login(email, password string) (string, error) {
@@ -23,7 +24,7 @@ func Login(email, password string) (string, error) {
 
 	// Compare hashed password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", errors.New("invalid credentials")
+		return "", errors.New("invalid password")
 	}
 
 	// Generate JWT token

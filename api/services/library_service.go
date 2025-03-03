@@ -8,6 +8,11 @@ import (
 
 // CreateLibrary creates a new library and assigns the user as the Owner
 func CreateLibrary(owner *models.User, library *models.Library) error {
+
+	var existingUser models.User
+	if err := config.DB.Where("email = ?", owner.Email).First(&existingUser).Error; err == nil {
+		return errors.New("user with this email already exists")
+	}
 	tx := config.DB.Begin()
 
 	// Step 1: Create Library FIRST

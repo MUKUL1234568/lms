@@ -18,7 +18,7 @@ func RequestRoutes(router *gin.Engine) {
 		requestGroup.POST("/", middleware.RoleMiddleware("Reader"), controllers.CreateRequest)
 
 		// ✅ Only LibraryAdmins can approve/reject requests
-		requestGroup.PUT("/:id/approve", middleware.RoleMiddleware("LibraryAdmin"), controllers.ApproveRequest)
+		requestGroup.PUT("/:id/approve", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.ApproveRequest)
 
 		// ✅ Readers can view their own requests
 		requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
