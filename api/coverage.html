@@ -59,13 +59,13 @@
 				
 				<option value="file1">library-management-api/config/db.go (0.0%)</option>
 				
-				<option value="file2">library-management-api/controllers/auth_controller.go (26.1%)</option>
+				<option value="file2">library-management-api/controllers/auth_controller.go (30.4%)</option>
 				
 				<option value="file3">library-management-api/controllers/book_controller.go (0.0%)</option>
 				
 				<option value="file4">library-management-api/controllers/issue_registry_controller.go (0.0%)</option>
 				
-				<option value="file5">library-management-api/controllers/library_controller.go (0.0%)</option>
+				<option value="file5">library-management-api/controllers/library_controller.go (61.5%)</option>
 				
 				<option value="file6">library-management-api/controllers/request_controller.go (0.0%)</option>
 				
@@ -91,25 +91,25 @@
 				
 				<option value="file17">library-management-api/routes/issue_registry_routes.go (0.0%)</option>
 				
-				<option value="file18">library-management-api/routes/library_routes.go (0.0%)</option>
+				<option value="file18">library-management-api/routes/library_routes.go (100.0%)</option>
 				
 				<option value="file19">library-management-api/routes/request_routes.go (0.0%)</option>
 				
 				<option value="file20">library-management-api/routes/user_routes.go (0.0%)</option>
 				
-				<option value="file21">library-management-api/services/auth_service.go (15.8%)</option>
+				<option value="file21">library-management-api/services/auth_service.go (57.9%)</option>
 				
 				<option value="file22">library-management-api/services/book_service.go (0.0%)</option>
 				
 				<option value="file23">library-management-api/services/issue_registry_service.go (0.0%)</option>
 				
-				<option value="file24">library-management-api/services/library_service.go (0.0%)</option>
+				<option value="file24">library-management-api/services/library_service.go (28.6%)</option>
 				
 				<option value="file25">library-management-api/services/request_service.go (0.0%)</option>
 				
 				<option value="file26">library-management-api/services/user_service.go (0.0%)</option>
 				
-				<option value="file27">library-management-api/validator/validator.go (0.0%)</option>
+				<option value="file27">library-management-api/validator/validator.go (37.5%)</option>
 				
 				</select>
 			</div>
@@ -219,7 +219,7 @@ func Login(c *gin.Context) <span class="cov8" title="1">{
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{
                 "message": "Login successful",
                 "token":   token,
         })</span>
@@ -539,7 +539,7 @@ import (
 // }
 
 // CreateLibrary handles the creation of a new library with an owner
-func CreateLibrary(c *gin.Context) <span class="cov0" title="0">{
+func CreateLibrary(c *gin.Context) <span class="cov8" title="1">{
         var request struct {
                 LibraryName   string `json:"library_name" binding:"required"`
                 OwnerName     string `json:"owner_name" binding:"required"`
@@ -554,20 +554,20 @@ func CreateLibrary(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">if err := validator.Validatephonenumbr(request.OwnerContact); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := validator.Validatephonenumbr(request.OwnerContact); err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // ✅ Hash the Password before storing it
-        <span class="cov0" title="0">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.OwnerPassword), bcrypt.DefaultCost)
+        <span class="cov8" title="1">hashedPassword, err := bcrypt.GenerateFromPassword([]byte(request.OwnerPassword), bcrypt.DefaultCost)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
                 return
         }</span>
 
         // Create User (Owner)
-        <span class="cov0" title="0">owner := models.User{
+        <span class="cov8" title="1">owner := models.User{
                 Name:          request.OwnerName,
                 Email:         request.OwnerEmail,
                 Password:      string(hashedPassword), // ✅ Store hashed password
@@ -585,13 +585,13 @@ func CreateLibrary(c *gin.Context) <span class="cov0" title="0">{
         // Call Service
         // Call Service
         err = services.CreateLibrary(&amp;owner, &amp;library)
-        if err != nil </span><span class="cov0" title="0">{
-                if err.Error() == "user with this email already exists" </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
+                if err.Error() == "user with this email already exists" </span><span class="cov8" title="1">{
                         c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
                 }</span> else<span class="cov0" title="0"> {
                         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 }</span>
-                <span class="cov0" title="0">return</span>
+                <span class="cov8" title="1">return</span>
         }
 
         // Success Response
@@ -602,14 +602,14 @@ func CreateLibrary(c *gin.Context) <span class="cov0" title="0">{
         })</span>
 }
 
-func GetLibraries(c *gin.Context) <span class="cov0" title="0">{
+func GetLibraries(c *gin.Context) <span class="cov8" title="1">{
         libraries, err := services.GetAllLibraries()
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"libraries": libraries})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"libraries": libraries})</span>
 }
 </pre>
 		
@@ -1395,9 +1395,9 @@ import (
 )
 
 // LibraryRoutes registers routes for Library
-func LibraryRoutes(router *gin.Engine) <span class="cov0" title="0">{
+func LibraryRoutes(router *gin.Engine) <span class="cov8" title="1">{
         libGroup := router.Group("/libraries")
-        </span><span class="cov0" title="0">{
+        </span><span class="cov8" title="1">{
                 libGroup.POST("/", controllers.CreateLibrary) // ✅ Create Library with Owner
                 libGroup.GET("/", controllers.GetLibraries)   // ✅ Add this in your routes
 
@@ -1500,21 +1500,21 @@ func Login(email, password string) (string, error) <span class="cov8" title="1">
         }</span>
 
         // Compare hashed password
-        <span class="cov0" title="0">if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil </span><span class="cov8" title="1">{
                 return "", errors.New("invalid password")
         }</span>
 
         // Generate JWT token
-        <span class="cov0" title="0">token, err := generateJWT(user)
+        <span class="cov8" title="1">token, err := generateJWT(user)
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
 
-        <span class="cov0" title="0">return token, nil</span>
+        <span class="cov8" title="1">return token, nil</span>
 }
 
 // generateJWT creates a JWT token with user information
-func generateJWT(user models.User) (string, error) <span class="cov0" title="0">{
+func generateJWT(user models.User) (string, error) <span class="cov8" title="1">{
 
         claims := jwt.MapClaims{
                 "user_id": user.ID,
@@ -1679,10 +1679,10 @@ import (
 )
 
 // CreateLibrary creates a new library and assigns the user as the Owner
-func CreateLibrary(owner *models.User, library *models.Library) error <span class="cov0" title="0">{
+func CreateLibrary(owner *models.User, library *models.Library) error <span class="cov8" title="1">{
 
         var existingUser models.User
-        if err := config.DB.Where("email = ?", owner.Email).First(&amp;existingUser).Error; err == nil </span><span class="cov0" title="0">{
+        if err := config.DB.Where("email = ?", owner.Email).First(&amp;existingUser).Error; err == nil </span><span class="cov8" title="1">{
                 return errors.New("user with this email already exists")
         }</span>
         <span class="cov0" title="0">tx := config.DB.Begin()
@@ -1708,14 +1708,14 @@ func CreateLibrary(owner *models.User, library *models.Library) error <span clas
         return nil</span>
 }
 
-func GetAllLibraries() ([]models.Library, error) <span class="cov0" title="0">{
+func GetAllLibraries() ([]models.Library, error) <span class="cov8" title="1">{
         var libraries []models.Library
 
         if err := config.DB.Preload("Users").Preload("Books").Find(&amp;libraries).Error; err != nil </span><span class="cov0" title="0">{
                 return nil, errors.New("failed to fetch libraries")
         }</span>
 
-        <span class="cov0" title="0">return libraries, nil</span>
+        <span class="cov8" title="1">return libraries, nil</span>
 }
 func Getlibbyid(id uint) error <span class="cov0" title="0">{
         var library *models.Library
@@ -1918,12 +1918,12 @@ import (
         "regexp"
 )
 
-func Validatephonenumbr(con_num string) error <span class="cov0" title="0">{
+func Validatephonenumbr(con_num string) error <span class="cov8" title="1">{
         re := regexp.MustCompile(`^\d{10}$`)
         if !re.MatchString(con_num) </span><span class="cov0" title="0">{
                 return errors.New("contact number should be of 10 digit ")
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
 func Validateisbn(isbn string) error <span class="cov0" title="0">{

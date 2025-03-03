@@ -86,3 +86,5 @@ func TestLogin_InvalidEmail(t *testing.T) {
 
 	fmt.Println("✅ TestLogin_InvalidEmail Passed") // Explicit success message
 }
+
+// go test -coverprofile=coverage ./...
