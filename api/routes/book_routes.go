@@ -16,10 +16,9 @@ func BookRoutes(router *gin.Engine) {
 		bookGroup.GET("/:isbn", controllers.GetBookByISBN)
 		bookGroup.GET("/lib", controllers.GetBooksByLibrary)
 
-		protected := bookGroup.Group("/")
-		protected.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
-		protected.POST("/", controllers.AddBook)
-		protected.PUT("/:isbn", controllers.UpdateBook)
-		protected.DELETE("/:isbn", controllers.DeleteBook)
+		bookGroup.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
+		bookGroup.POST("/", controllers.AddBook)
+		bookGroup.PUT("/:isbn", controllers.UpdateBook)
+		bookGroup.DELETE("/:isbn", controllers.DeleteBook)
 	}
 }

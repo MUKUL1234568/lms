@@ -30,28 +30,28 @@ func GetUsersByLibrary(libID uint) ([]models.User, error) {
 	return users, nil
 }
 
-func MakeAdmin(userID uint, role string) (*models.User, error) {
-	var user models.User
-	if err := config.DB.First(&user, userID).Error; err != nil {
-		return nil, errors.New("user not found")
-	}
-	user.Role = role
-	if err := config.DB.Save(&user).Error; err != nil {
-		return nil, errors.New("faild to save to make admin ")
-	}
-	return &user, nil
-}
+// func MakeAdmin(userID uint, role string) (*models.User, error) {
+// 	var user models.User
+// 	if err := config.DB.First(&user, userID).Error; err != nil {
+// 		return nil, errors.New("user not found")
+// 	}
+// 	user.Role = role
+// 	if err := config.DB.Save(&user).Error; err != nil {
+// 		return nil, errors.New("faild to save to make admin ")
+// 	}
+// 	return &user, nil
+// }
 
-func DeleteUser(userid uint) error {
-	var user models.User
-	errr := config.DB.Find(&user, userid).Error
-	if errr != nil {
-		return errors.New("user not found")
-	}
+// func DeleteUser(userid uint) error {
+// 	var user models.User
+// 	errr := config.DB.Find(&user, userid).Error
+// 	if errr != nil {
+// 		return errors.New("user not found")
+// 	}
 
-	err := config.DB.Delete(&user).Error
-	if err != nil {
-		return errors.New("failed to delete ")
-	}
-	return nil
-}
+// 	err := config.DB.Delete(&user).Error
+// 	if err != nil {
+// 		return errors.New("failed to delete ")
+// 	}
+// 	return nil
+// }
