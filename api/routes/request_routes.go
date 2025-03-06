@@ -9,22 +9,14 @@ import (
 
 // RequestRoutes registers book request routes
 func RequestRoutes(router *gin.Engine) {
-	requestGroup := router.Group("/requests")
+	requestGroup := router.Group("/request")
 	{
-		// Protect all request routes with authentication
+
 		requestGroup.Use(middleware.AuthMiddleware())
-
-		// ✅ Only Readers can create book requests (Issue/Return)
 		requestGroup.POST("/", middleware.RoleMiddleware("Reader"), controllers.CreateRequest)
-
-		// ✅ Only LibraryAdmins can approve/reject requests
-		requestGroup.PUT("/:id/approve", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.ApproveRequest)
-
-		// ✅ Readers can view their own requests
-		requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
-
-		// ✅ LibraryAdmins can view all requests
-		requestGroup.GET("/allreq", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllRequestsForAdmin)
+		requestGroup.PUT("/:id", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.ApproveRequest)
+		//requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
+		requestGroup.GET("/", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllRequestsForAdmin)
 	}
 }
 

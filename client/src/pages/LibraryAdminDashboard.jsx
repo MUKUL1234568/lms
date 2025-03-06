@@ -10,7 +10,7 @@ import Dashboard from "../components/admin/Dashboard"
  import UserList from "../components/admin/UserList"
  import IssuedBookList from "../components/books/IssuedBookList" 
 import AddBookModal from "../components/books/AddBookModal"
-// import EditBookModal from "./components/EditBookModal"
+ import EditBookModal from "../components/books/Editbookmodal"
 import "./admin.css"
 
 const admin = () => {
@@ -21,11 +21,35 @@ const admin = () => {
   const [books, setBooks] = useState([])
   const [users, setUsers] = useState([])
    const [requests, setRequests] = useState([])
+   const [issueregistry,setissueregistry]=useState([])
+
+ const fetchIssueregistry=async ()=>{
+  const token =localStorage.getItem("token");
+  
+  try{
+    const response =await axios.get("http://localhost:8080/issueregistry/",{
+      headers:{
+          Authorization:` Bearer ${token}`,
+      },
+    });
+   
+    if(response.status==200)
+    {
+      setissueregistry(response.data.issued_books)
+    }
+    else{
+      console.log("error in fetching the issueregistry from database")
+    }
+  } catch(error){
+      console.error("error in fetching the ",error)
+  }
+ };
+
   const fetchbook= async ()=>{
     const token =localStorage.getItem("token");
   
     try{
-      const response =await axios.get("http://localhost:8080/books/lib",{
+      const response =await axios.get("http://localhost:8080/book/",{
         headers:{
             Authorization:` Bearer ${token}`,
         },
@@ -46,7 +70,7 @@ const admin = () => {
     const token =localStorage.getItem("token");
   
     try{
-      const response =await axios.get("http://localhost:8080/users/",{
+      const response =await axios.get("http://localhost:8080/user/",{
         headers:{
             Authorization:` Bearer ${token}`,
         },
@@ -68,7 +92,7 @@ const admin = () => {
     const token =localStorage.getItem("token");
   
     try{
-      const response =await axios.get("http://localhost:8080/requests/allreq",{
+      const response =await axios.get("http://localhost:8080/request/",{
         headers:{
             Authorization:` Bearer ${token}`,
         },
@@ -76,7 +100,7 @@ const admin = () => {
      
       if(response.status==200)
       {
-        console.log(response.data.requests)
+        // console.log(response.data.requests)
         setRequests(response.data.requests)
       }
       else{
@@ -90,14 +114,13 @@ const admin = () => {
     fetchbook();
     fetchuser();
     fetchrequest();
+    fetchIssueregistry();
 },[]);
 
    
 
  
-  const [issuedBooks, setIssuedBooks] = useState([
-    { id: 1, bookId: "977-0234190440", userId: 1, issueDate: "2023-05-01", returnDate: "2023-05-15" },
-  ])
+   
 
  
  
@@ -106,7 +129,7 @@ const admin = () => {
     
     const token=localStorage.getItem("token")
     try{
-      const response= await axios.post("http://localhost:8080/books/",{...newBook, total_copies: Number(newBook.total_copies)} ,{
+      const response= await axios.post("http://localhost:8080/book/",{...newBook, total_copies: Number(newBook.total_copies)} ,{
         headers:{ "Content-Type":"application/json",
           Authorization:`Bearer ${token}`
                   
@@ -128,33 +151,117 @@ const admin = () => {
 
   }
 
-  const updateBook = (updatedBook) => {
-    setBooks(books.map((book) => (book.id === updatedBook.id ? updatedBook : book)))
-    setShowEditBookModal(false)
+  const updateBook = async (updatedBook) => {
+    // console.log(updatedBook)
+    const token =localStorage.getItem("token");
+        console.log(updatedBook.isbn)
+    try{
+       const response=await axios.patch(`http://localhost:8080/book/${updatedBook.isbn}`,{...updatedBook,total_copies: Number(updatedBook.total_copies),available_copies: Number(updatedBook.available_copies)},
+       {
+        headers:{"Content-Type":"application/json",
+          Authorization:`Bearer ${token}`}
+       }); 
+       if(response.status==200){
+        setBooks(books.map((book) => (book.isbn === updatedBook.isbn ? updatedBook : book)))
+        setShowEditBookModal(false)
+       } 
+       else
+       {
+        console.error("faild to update the book")
+       }
+    } catch(error){
+      console.error("error in updating the book",error)
+}
+         setShowAddBookModal(false)
   }
 
-  const removeBook = (id) => {
-    setBooks(books.filter((book) => book.id !== id))
+  const removeBook = async(isbn) => {
+    const token =localStorage.getItem("token");
+    
+try{
+   const response=await axios.delete(`http://localhost:8080/book/${isbn}`,
+   {
+    headers:{"Content-Type":"application/json",
+      Authorization:`Bearer ${token}`}
+   }); 
+   if(response.status==200){
+    setBooks(books.filter((book) => book.isbn !== isbn))
+   } 
+   else
+   {
+    console.error("faild to delete the book")
+   }
+} catch(error){
+  console.error("error in deleting the book",error)
+}
+    
   }
 
-  const approveRequest = (id) => {
-    const request = requests.find((r) => r.req_id === id)
-    setRequests(requests.map((r) => (r.req_id === id ? { ...r, status: "approved" } : r)))
-    setIssuedBooks([
-      ...issuedBooks,
-      {
-        id: issuedBooks.length + 1,
-        bookId: request.book_id,
-        userId: request.reader_id,
-        issueDate: new Date().toISOString().split("T")[0],
-        returnDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      },
-    ])
-  }
 
-  const rejectRequest = (id) => {
-    setRequests(requests.map((r) => (r.req_id === id ? { ...r, status: "rejected" } : r)))
-  }
+  
+
+  const approveRequest = async (id) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      // Call the approve API to approve the request with the token
+      const response = await axios.put(
+        `http://localhost:8080/request/${id}`,
+        { approve: true }, // Pass the approval flag
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Pass the token in the header
+          },
+        }
+      );
+  
+      // After successful approval, update the local state
+      if (response.status === 200) {
+        setRequests(
+          requests.map((r) =>
+            r.req_id === id ? { ...r, status: "approved" } : r
+          )
+        );
+      } else {
+        console.error("Failed to approve the request");
+      }
+    } catch (error) {
+      console.error("Error approving the request", error);
+    }
+  };
+  
+
+  const rejectRequest = async(id) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      // Call the approve API to approve the request with the token
+      const response = await axios.put(
+        `http://localhost:8080/request/${id}`,
+        { approve: false }, // Pass the approval flag
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Pass the token in the header
+          },
+        }
+      );
+  
+      // After successful approval, update the local state
+      if (response.status === 200) {
+        setRequests(
+          requests.map((r) =>
+            r.req_id === id ? { ...r, status: "approved" } : r
+          )
+        );
+      } else {
+        console.error("Failed to approve the request");
+      }
+    } catch (error) {
+      console.error("Error approving the request", error);
+    }
+  };
   // const updateIssuedBook = (id, status) => {
   //   setIssuedBooks(issuedBooks.map((book) => (book.id === id ? { ...book, status } : book)))
   // }
@@ -165,7 +272,7 @@ const admin = () => {
       <div className="main-content">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="content">
-        {activeTab === "dashboard" && <Dashboard books={books} issuedBooks={issuedBooks} users={users} />}
+        {activeTab === "dashboard" && <Dashboard books={books} issuedBooks={issueregistry} users={users} />}
           {activeTab === "books" && (
             <>
               <div className="content-header">
@@ -189,20 +296,20 @@ const admin = () => {
            {activeTab === "requests" && (
             <>
               <h2>Pending Requests</h2>
-              <RequestList requests={requests} books={books} users={users} onApprove={approveRequest} onReject={rejectRequest}
+              <RequestList requests={requests}  onApprove={approveRequest} onReject={rejectRequest}
               />
             </>
           )}
           {activeTab === "users" && (
             <>
               <h2>User List</h2>
-              <UserList users={users} issuedBooks={issuedBooks} books={books}/>
+              <UserList users={users} issuedBooks={issueregistry} books={books}/>
             </>
           )}
           {activeTab === "issued" && (
             <>
               <h2>Issued Books</h2>
-              <IssuedBookList issuedBooks={issuedBooks} books={books} users={users}   />
+              <IssuedBookList  issueregistry={issueregistry}  />
             </>
           )}
         </div>

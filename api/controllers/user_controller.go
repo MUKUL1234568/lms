@@ -8,7 +8,7 @@ import (
 	"library-management-api/services"
 	"library-management-api/validator"
 	"net/http"
-	// "strconv"
+	"strconv"
 )
 
 // RegisterUser handles user registration
@@ -115,84 +115,97 @@ func GetUsersByLibrary(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"users": users})
 }
 
-// func MakeAdmin(c *gin.Context) {
-// 	useridstr := c.Param("id")
+func MakeAdmin(c *gin.Context) {
+	useridstr := c.Param("id")
 
-// 	userid64, err := strconv.ParseUint(useridstr, 10, 32)
-// 	if err != nil {
-// 		c.JSON(400, gin.H{"error": "Invalid ID"})
-// 		return
-// 	}
-// 	userid := uint(userid64)
+	userid64, err := strconv.ParseUint(useridstr, 10, 32)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+	userid := uint(userid64)
 
-// 	var request struct {
-// 		Role string `json:"role" binding:"required"`
-// 	}
+	var request struct {
+		Role string `json:"role" binding:"required"`
+	}
 
-// 	if err := c.ShouldBindJSON(&request); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	if request.Role != "LibraryAdmin" && request.Role != "Reader" {
-// 		c.JSON(http.StatusBadRequest, gin.H{"messege": "not valid role"})
-// 		return
-// 	}
-// 	fmt.Println(userid, request.Role)
-// 	userc, err := services.GetUserByID(userid)
-// 	if err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-// 		return
-// 	}
-// 	libID, err := GetLibraryID(c)
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if request.Role != "LibraryAdmin" && request.Role != "Reader" {
+		c.JSON(http.StatusBadRequest, gin.H{"messege": "not valid role"})
+		return
+	}
+	fmt.Println(userid, request.Role)
+	userc, err := services.GetUserByID(userid)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	if userc.LibID != libID {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
-// 		return
-// 	}
-// 	user, err := services.MakeAdmin(userid, request.Role)
+	if userc.LibID != libID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+		return
+	}
+	user, err := services.MakeAdmin(userid, request.Role)
 
-// 	if err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "service is not initiated "})
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"admin": user})
-// }
+	if err != nil {
+		if err.Error() == "user not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		if err.Error() == "owner can not be the admin" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{"admin": user})
+}
 
-// func DeleteUser(c *gin.Context) {
-// 	useridstr := c.Param("id")
+func DeleteUser(c *gin.Context) {
+	useridstr := c.Param("id")
 
-// 	userid64, err := strconv.ParseUint(useridstr, 10, 32)
-// 	if err != nil {
-// 		c.JSON(400, gin.H{"error": "Invalid ID"})
-// 		return
-// 	}
-// 	userid := uint(userid64)
+	userid64, err := strconv.ParseUint(useridstr, 10, 32)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+	userid := uint(userid64)
 
-// 	userc, err := services.GetUserByID(userid)
-// 	if err != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-// 		return
-// 	}
+	userc, err := services.GetUserByID(userid)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
 
-// 	libID, err := GetLibraryID(c)
-// 	if err != nil {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	if userc.LibID != libID {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
-// 		return
-// 	}
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	if userc.LibID != libID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "your are not registred in this library"})
+		return
+	}
 
-// 	errr := services.DeleteUser(userid)
-// 	if errr != nil {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found "})
-// 		return
-// 	}
+	errr := services.DeleteUser(userid)
+	if errr != nil {
+		if errr.Error() == "user not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": errr.Error()})
+			return
+		}
+		if errr.Error() == "can't delete owner" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": errr.Error()})
+			return
+		}
+	}
 
-// 	c.JSON(http.StatusOK, gin.H{"message": "user deleted succesfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted succesfully"})
 
-// }
+}

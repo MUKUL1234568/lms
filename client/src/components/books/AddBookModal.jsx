@@ -6,15 +6,28 @@ import "./AddBookModal.css"
 
 const AddBookModal = ({ onClose, onAdd }) => {
   const [newBook, setNewBook] = useState({ isbn:"",title: "", authors: "",publisher:"",version:"" ,total_copies: ""})
+  const [error, setError] = useState("")
+  const validateForm = () => {
+    if (!/^\d{13}$/.test(newBook.isbn)) {
+      setError("ISBN must be exactly 13 digits.")
+      return false
+    }
+    
+    setError("")
+    return true
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if(validateForm()){
     onAdd(newBook)
+    }
   }
 
   return (
     <Modal onClose={onClose}>
       <h2>Add New Book</h2>
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit} className="add-book-form">
         <input
           type="text"
@@ -47,7 +60,7 @@ const AddBookModal = ({ onClose, onAdd }) => {
         <input
           type="text"
           placeholder="Author"
-          value={newBook.author}
+          value={newBook.authors}
           onChange={(e) => setNewBook({ ...newBook, authors: e.target.value })}
           required
         />

@@ -31,9 +31,9 @@ function LoginModal({ onClose, onLogin }) {
       console.log(decodetoken)
       const userRole=decodetoken.role
       if (userRole === "LibraryAdmin") {
-        navigate("/library-admin-dashboard");
+        navigate("/admindashboard");
       } else if (userRole === "Owner") {
-        navigate("/owner-dashboard");
+        navigate("/admindashboard");
       } else if (userRole === "Reader") {
         navigate("/reader-dashboard");
       } else {

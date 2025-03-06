@@ -124,9 +124,9 @@ func ApproveRequest(c *gin.Context) {
 
 	// Parse JSON body
 	var request struct {
-		Approve bool `json:"approve" binding:"required"`
+		Approve bool `json:"approve" `
 	}
-
+	fmt.Println("ok")
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -148,6 +148,10 @@ func ApproveRequest(c *gin.Context) {
 	var reqEvent models.RequestEvent
 	if err := services.GetRequestByID(uint(requestID), &reqEvent); err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Request not found"})
+		return
+	}
+	if reqEvent.Status != "pending" {
+		c.JSON(http.StatusAlreadyReported, gin.H{"error": "Request already processed"})
 		return
 	}
 	fmt.Println(libID, reqEvent.Book.LibID)
@@ -177,25 +181,25 @@ func ApproveRequest(c *gin.Context) {
 }
 
 // GetUserRequests fetches all requests made by the logged-in user
-func GetUserRequests(c *gin.Context) {
-	// Get `ReaderID` from session (logged-in user)
+// func GetUserRequests(c *gin.Context) {
+// 	// Get `ReaderID` from session (logged-in user)
 
-	readerID, err := GetUserID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
+// 	readerID, err := GetUserID(c)
+// 	if err != nil {
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	// Call service to fetch user requests
-	requests, err := services.GetUserRequests(readerID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	// Call service to fetch user requests
+// 	requests, err := services.GetUserRequests(readerID)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	// Success response
-	c.JSON(http.StatusOK, gin.H{"requests": requests})
-}
+// 	// Success response
+// 	c.JSON(http.StatusOK, gin.H{"requests": requests})
+// }
 
 func GetAllRequestsForAdmin(c *gin.Context) {
 	// // Get `Role` from session (logged-in user)
@@ -207,13 +211,13 @@ func GetAllRequestsForAdmin(c *gin.Context) {
 
 	// Call service to fetch all requests
 
-	libID, err := GetLibraryID(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
+	// libID, err := GetLibraryID(c)
+	// if err != nil {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+	// 	return
+	// }
 
-	requests, err := services.GetAllRequests(libID)
+	requests, err := services.GetAllRequests()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -222,3 +226,11 @@ func GetAllRequestsForAdmin(c *gin.Context) {
 	// Success response
 	c.JSON(http.StatusOK, gin.H{"requests": requests})
 }
+
+// func GetRequestByID(c *gin.Context) {
+// 	var reqEvent models.RequestEvent
+// 	if err := services.GetRequestByID(uint(requestID), &reqEvent); err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "Request not found"})
+// 		return
+// 	}
+// }

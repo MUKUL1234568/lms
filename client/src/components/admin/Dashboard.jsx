@@ -5,24 +5,16 @@ import "./Dashboard.css"
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
 
 const Dashboard = ({ books, issuedBooks, users }) => {
+  // Calculate total number of copies
+  const totalCopies = books.reduce((sum, book) => sum + (book.total_copies || 0), 0)
+
   const bookData = {
     labels: ["Total Books", "Issued Books"],
     datasets: [
       {
-        data: [books.length, issuedBooks.length],
+        data: [totalCopies, issuedBooks.length],
         backgroundColor: ["#36A2EB", "#FFCE56"],
         hoverBackgroundColor: ["#36A2EB", "#FFCE56"],
-      },
-    ],
-  }
-
-  const userIssuedBooksData = {
-    labels: users.map((user) => user.name),
-    datasets: [
-      {
-        label: "Number of Issued Books",
-        data: users.map((user) => issuedBooks.filter((book) => book.userId === user.id).length),
-        backgroundColor: "rgba(75,192,192,0.6)",
       },
     ],
   }
@@ -33,7 +25,7 @@ const Dashboard = ({ books, issuedBooks, users }) => {
       <div className="dashboard-stats">
         <div className="stat-item">
           <h3>Total Books</h3>
-          <p>{books.length}</p>
+          <p>{totalCopies}</p>
         </div>
         <div className="stat-item">
           <h3>Issued Books</h3>
@@ -49,11 +41,9 @@ const Dashboard = ({ books, issuedBooks, users }) => {
           <h3>Books Overview</h3>
           <Pie data={bookData} />
         </div>
-         
       </div>
     </div>
   )
 }
 
 export default Dashboard
-

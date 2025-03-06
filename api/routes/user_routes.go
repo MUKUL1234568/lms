@@ -11,15 +11,12 @@ import (
 func UserRoutes(router *gin.Engine) {
 	userGroup := router.Group("/user")
 	{
-		userGroup.POST("/register", controllers.RegisterUser) // ✅ Public (Anyone Can Register)
-
-		// Protected User Routes
+		userGroup.POST("/register", controllers.RegisterUser)
 		userGroup.Use(middleware.AuthMiddleware())
-		//userGroup.PUT("/role/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
-		userGroup.GET("/all", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
-		// ✅ Requires Authentication
-		userGroup.GET("/profile", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
-		//userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
+		userGroup.GET("/", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
+		userGroup.GET("/profile", controllers.GetUser)
+		userGroup.PUT("/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
+		userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
 	}
 
 }

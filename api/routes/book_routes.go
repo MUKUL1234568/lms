@@ -8,17 +8,15 @@ import (
 
 // BookRoutes registers book-related routes
 func BookRoutes(router *gin.Engine) {
-	bookGroup := router.Group("/books")
+	bookGroup := router.Group("/book")
 	{
-		// ✅ Public Route (Anyone Can View Books)
 
 		bookGroup.Use(middleware.AuthMiddleware())
 		bookGroup.GET("/:isbn", controllers.GetBookByISBN)
-		bookGroup.GET("/lib", controllers.GetBooksByLibrary)
-
+		bookGroup.GET("/", controllers.GetBooksByLibrary)
 		bookGroup.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
 		bookGroup.POST("/", controllers.AddBook)
-		bookGroup.PUT("/:isbn", controllers.UpdateBook)
+		bookGroup.PATCH("/:isbn", controllers.UpdateBook)
 		bookGroup.DELETE("/:isbn", controllers.DeleteBook)
 	}
 }

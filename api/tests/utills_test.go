@@ -67,6 +67,18 @@ func SetUpauthroutes() *gin.Engine {
 	return r
 }
 
+func SetIssueroutes() *gin.Engine {
+	r := gin.Default()
+	routes.IssueRegistryRoutes(r)
+	return r
+}
+
+func SetrequestsRoutes() *gin.Engine {
+	r := gin.Default()
+	routes.RequestRoutes(r)
+	return r
+}
+
 // Function to retrieve token with custom credentials
 func getAuthToken(email, password string) string {
 	// Prepare login request

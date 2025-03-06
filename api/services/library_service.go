@@ -13,6 +13,10 @@ func CreateLibrary(owner *models.User, library *models.Library) error {
 	if err := config.DB.Where("email = ?", owner.Email).First(&existingUser).Error; err == nil {
 		return errors.New("user with this email already exists")
 	}
+	var existingUserr models.Library
+	if err := config.DB.Where("name = ?", library.Name).First(&existingUserr).Error; err == nil {
+		return errors.New("choose different library name")
+	}
 	tx := config.DB.Begin()
 
 	// Step 1: Create Library FIRST

@@ -63,17 +63,17 @@
 				
 				<option value="file3">library-management-api/controllers/book_controller.go (64.2%)</option>
 				
-				<option value="file4">library-management-api/controllers/issue_registry_controller.go (0.0%)</option>
+				<option value="file4">library-management-api/controllers/issue_registry_controller.go (57.1%)</option>
 				
 				<option value="file5">library-management-api/controllers/library_controller.go (72.0%)</option>
 				
-				<option value="file6">library-management-api/controllers/request_controller.go (0.0%)</option>
+				<option value="file6">library-management-api/controllers/request_controller.go (56.4%)</option>
 				
 				<option value="file7">library-management-api/controllers/user_controller.go (75.6%)</option>
 				
 				<option value="file8">library-management-api/main.go (0.0%)</option>
 				
-				<option value="file9">library-management-api/middleware/auth_middleware.go (70.3%)</option>
+				<option value="file9">library-management-api/middleware/auth_middleware.go (83.8%)</option>
 				
 				<option value="file10">library-management-api/models/book.go (0.0%)</option>
 				
@@ -89,11 +89,11 @@
 				
 				<option value="file16">library-management-api/routes/book_routes.go (100.0%)</option>
 				
-				<option value="file17">library-management-api/routes/issue_registry_routes.go (0.0%)</option>
+				<option value="file17">library-management-api/routes/issue_registry_routes.go (100.0%)</option>
 				
 				<option value="file18">library-management-api/routes/library_routes.go (100.0%)</option>
 				
-				<option value="file19">library-management-api/routes/request_routes.go (0.0%)</option>
+				<option value="file19">library-management-api/routes/request_routes.go (100.0%)</option>
 				
 				<option value="file20">library-management-api/routes/user_routes.go (100.0%)</option>
 				
@@ -101,11 +101,11 @@
 				
 				<option value="file22">library-management-api/services/book_service.go (74.2%)</option>
 				
-				<option value="file23">library-management-api/services/issue_registry_service.go (0.0%)</option>
+				<option value="file23">library-management-api/services/issue_registry_service.go (66.7%)</option>
 				
 				<option value="file24">library-management-api/services/library_service.go (76.2%)</option>
 				
-				<option value="file25">library-management-api/services/request_service.go (0.0%)</option>
+				<option value="file25">library-management-api/services/request_service.go (82.4%)</option>
 				
 				<option value="file26">library-management-api/services/user_service.go (80.0%)</option>
 				
@@ -476,8 +476,13 @@ import (
 )
 
 // GetAllIssuedBooks retrieves all issued books (Only for LibraryAdmin)
-func GetAllIssuedBooks(c *gin.Context) <span class="cov0" title="0">{
+func GetAllIssuedBooks(c *gin.Context) <span class="cov8" title="1">{
         // Check if the user is a LibraryAdmin
+        // libID, err := GetLibraryID(c)
+        // if err != nil {
+        //         c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+        //         return
+        // }
 
         issuedBooks, err := services.GetAllIssuedBooks()
         if err != nil </span><span class="cov0" title="0">{
@@ -486,35 +491,27 @@ func GetAllIssuedBooks(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
 }
 
 // GetIssuedBooksByReader retrieves issued books for a specific reader
-func GetIssuedBooksByReader(c *gin.Context) <span class="cov0" title="0">{
+func GetIssuedBooksByReader(c *gin.Context) <span class="cov8" title="1">{
         // Get user_id from session
-        readerIDInterface, exists := c.Get("user_id")
-        if !exists </span><span class="cov0" title="0">{
-                c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+        readerID, err := GetUserID(c)
+        if err != nil </span><span class="cov0" title="0">{
+                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
                 return
         }</span>
-
-        // Convert interface{} to uint
-        <span class="cov0" title="0">readerIDFloat, ok := readerIDInterface.(float64)
-        if !ok </span><span class="cov0" title="0">{
-                c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-                return
-        }</span>
-        <span class="cov0" title="0">readerID := uint(readerIDFloat)
 
         // Fetch issued books for this reader
-        issuedBooks, err := services.GetIssuedBooksByReader(readerID)
+        <span class="cov8" title="1">issuedBooks, err := services.GetIssuedBooksByReader(readerID)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"issued_books": issuedBooks})</span>
 }
 </pre>
 		
@@ -618,25 +615,25 @@ import (
 // CreateRequest handles a reader's book request (Issue/Return)
 // CreateRequest handles a reader's book request (Issue/Return)
 
-func HasPendingRequest(user *models.User, isbn string) bool <span class="cov0" title="0">{
-        for _, req := range user.Requests </span><span class="cov0" title="0">{
+func HasPendingRequest(user *models.User, isbn string) bool <span class="cov8" title="1">{
+        for _, req := range user.Requests </span><span class="cov8" title="1">{
                 if req.ISBN == isbn &amp;&amp; req.Status == "pending" </span><span class="cov0" title="0">{
                         return true
                 }</span>
         }
-        <span class="cov0" title="0">return false</span>
+        <span class="cov8" title="1">return false</span>
 }
 
-func HasIssuedBook(user *models.User, isbn string) bool <span class="cov0" title="0">{
-        for _, req := range user.IssueRecords </span><span class="cov0" title="0">{
-                if req.ISBN == isbn &amp;&amp; req.IssueStatus == "Issued" </span><span class="cov0" title="0">{
+func HasIssuedBook(user *models.User, isbn string) bool <span class="cov8" title="1">{
+        for _, req := range user.IssueRecords </span><span class="cov8" title="1">{
+                if req.ISBN == isbn &amp;&amp; req.IssueStatus == "Issued" </span><span class="cov8" title="1">{
                         return true
                 }</span>
         }
-        <span class="cov0" title="0">return false</span>
+        <span class="cov8" title="1">return false</span>
 }
 
-func CreateRequest(c *gin.Context) <span class="cov0" title="0">{
+func CreateRequest(c *gin.Context) <span class="cov8" title="1">{
         var request struct {
                 ISBN        string `json:"isbn" binding:"required"`
                 RequestType string `json:"request_type" binding:"required"`
@@ -648,53 +645,53 @@ func CreateRequest(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">readerID, err := GetUserID(c)
+        <span class="cov8" title="1">readerID, err := GetUserID(c)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        <span class="cov8" title="1">libID, err := GetLibraryID(c)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">user, errr := services.GetUserByID(readerID)
+        <span class="cov8" title="1">user, errr := services.GetUserByID(readerID)
         if errr != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
                 return
         }</span>
 
-        <span class="cov0" title="0">if HasPendingRequest(user, request.ISBN) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if HasPendingRequest(user, request.ISBN) </span><span class="cov0" title="0">{
                 c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have made already request for this book wait for admin action"})
                 return
         }</span>
-        <span class="cov0" title="0">if request.RequestType != "Return" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if request.RequestType != "Return" </span><span class="cov8" title="1">{
                 if HasIssuedBook(user, request.ISBN) </span><span class="cov0" title="0">{
                         c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have  already  this book"})
                         return
                 }</span>
         }
 
-        <span class="cov0" title="0">if request.RequestType == "Return" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if request.RequestType == "Return" </span><span class="cov8" title="1">{
                 if !HasIssuedBook(user, request.ISBN) </span><span class="cov0" title="0">{
                         c.JSON(http.StatusAlreadyReported, gin.H{"error": "you have not this book to return "})
                         return
                 }</span>
         }
-        <span class="cov0" title="0">book, err := services.GetBookByISBN(request.ISBN)
+        <span class="cov8" title="1">book, err := services.GetBookByISBN(request.ISBN)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">if libID != book.LibID </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if libID != book.LibID </span><span class="cov0" title="0">{
                 c.JSON(http.StatusForbidden, gin.H{"error": "not registred with same library"})
                 return
         }</span>
         // Create RequestEvent with RequestDate
-        <span class="cov0" title="0">reqEvent := models.RequestEvent{
+        <span class="cov8" title="1">reqEvent := models.RequestEvent{
                 ISBN:        request.ISBN,
                 ReaderID:    readerID, // ✅ Fixed conversion issue
                 RequestType: request.RequestType,
@@ -709,7 +706,7 @@ func CreateRequest(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusCreated, gin.H{
+        <span class="cov8" title="1">c.JSON(http.StatusCreated, gin.H{
                 "message": "Request submitted successfully",
                 "request": reqEvent,
         })</span>
@@ -717,7 +714,7 @@ func CreateRequest(c *gin.Context) <span class="cov0" title="0">{
 
 // ApproveRequest handles approval or rejection of a book request
 // ApproveRequest handles approval or rejection of a book request
-func ApproveRequest(c *gin.Context) <span class="cov0" title="0">{
+func ApproveRequest(c *gin.Context) <span class="cov8" title="1">{
         // Parse request ID from URL
         requestID, err := strconv.ParseUint(c.Param("id"), 10, 64)
         if err != nil </span><span class="cov0" title="0">{
@@ -726,7 +723,7 @@ func ApproveRequest(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         // Parse JSON body
-        <span class="cov0" title="0">var request struct {
+        <span class="cov8" title="1">var request struct {
                 Approve bool `json:"approve" binding:"required"`
         }
 
@@ -735,52 +732,52 @@ func ApproveRequest(c *gin.Context) <span class="cov0" title="0">{
                 return
         }</span>
 
-        <span class="cov0" title="0">ApproverID, err := GetUserID(c)
+        <span class="cov8" title="1">ApproverID, err := GetUserID(c)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
                 return
         }</span>
 
-        <span class="cov0" title="0">libID, err := GetLibraryID(c)
+        <span class="cov8" title="1">libID, err := GetLibraryID(c)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // Fetch the request from DB
-        <span class="cov0" title="0">var reqEvent models.RequestEvent
+        <span class="cov8" title="1">var reqEvent models.RequestEvent
         if err := services.GetRequestByID(uint(requestID), &amp;reqEvent); err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusNotFound, gin.H{"error": "Request not found"})
                 return
         }</span>
-        <span class="cov0" title="0">fmt.Println(libID, reqEvent.Book.LibID)
+        <span class="cov8" title="1">fmt.Println(libID, reqEvent.Book.LibID)
         if libID != reqEvent.Book.LibID </span><span class="cov0" title="0">{
                 c.JSON(http.StatusUnauthorized, gin.H{"error": "not authorized to approve this request"})
                 return
         }</span>
         // If approving, set approval date and approver ID
-        <span class="cov0" title="0">if request.Approve </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if request.Approve </span><span class="cov8" title="1">{
                 now := time.Now()
                 reqEvent.ApprovalDate = &amp;now
                 reqEvent.ApproverID = &amp;ApproverID // ✅ Fix: Use a pointer
         }</span>
 
         // Call service to approve/reject request
-        <span class="cov0" title="0">err = services.ApproveRequest(&amp;reqEvent, request.Approve)
+        <span class="cov8" title="1">err = services.ApproveRequest(&amp;reqEvent, request.Approve)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{
                 "message": "Request processed successfully",
                 "request": reqEvent,
         })</span>
 }
 
 // GetUserRequests fetches all requests made by the logged-in user
-func GetUserRequests(c *gin.Context) <span class="cov0" title="0">{
+func GetUserRequests(c *gin.Context) <span class="cov8" title="1">{
         // Get `ReaderID` from session (logged-in user)
 
         readerID, err := GetUserID(c)
@@ -790,17 +787,17 @@ func GetUserRequests(c *gin.Context) <span class="cov0" title="0">{
         }</span>
 
         // Call service to fetch user requests
-        <span class="cov0" title="0">requests, err := services.GetUserRequests(readerID)
+        <span class="cov8" title="1">requests, err := services.GetUserRequests(readerID)
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
 }
 
-func GetAllRequestsForAdmin(c *gin.Context) <span class="cov0" title="0">{
+func GetAllRequestsForAdmin(c *gin.Context) <span class="cov8" title="1">{
         // // Get `Role` from session (logged-in user)
         // role, exists := c.Get("role")
         // if !exists || role != "LibraryAdmin" {
@@ -810,20 +807,20 @@ func GetAllRequestsForAdmin(c *gin.Context) <span class="cov0" title="0">{
 
         // Call service to fetch all requests
 
-        libID, err := GetLibraryID(c)
-        if err != nil </span><span class="cov0" title="0">{
-                c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-                return
-        }</span>
+        // libID, err := GetLibraryID(c)
+        // if err != nil {
+        //         c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+        //         return
+        // }
 
-        <span class="cov0" title="0">requests, err := services.GetAllRequests(libID)
+        requests, err := services.GetAllRequests()
         if err != nil </span><span class="cov0" title="0">{
                 c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
                 return
         }</span>
 
         // Success response
-        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
+        <span class="cov8" title="1">c.JSON(http.StatusOK, gin.H{"requests": requests})</span>
 }
 </pre>
 		
@@ -1143,8 +1140,8 @@ func AuthMiddleware() gin.HandlerFunc <span class="cov8" title="1">{
 }
 
 // RoleMiddleware restricts access based on user role
-func RoleMiddleware(requiredRole string) gin.HandlerFunc <span class="cov0" title="0">{
-        return func(c *gin.Context) </span><span class="cov0" title="0">{
+func RoleMiddleware(requiredRole string) gin.HandlerFunc <span class="cov8" title="1">{
+        return func(c *gin.Context) </span><span class="cov8" title="1">{
                 role, exists := c.Get("role")
                 fmt.Println((role))
                 if !exists || role != requiredRole </span><span class="cov0" title="0">{
@@ -1152,7 +1149,7 @@ func RoleMiddleware(requiredRole string) gin.HandlerFunc <span class="cov0" titl
                         c.Abort()
                         return
                 }</span>
-                <span class="cov0" title="0">c.Next()</span>
+                <span class="cov8" title="1">c.Next()</span>
         }
 }
 
@@ -1333,12 +1330,10 @@ import (
 func BookRoutes(router *gin.Engine) <span class="cov8" title="1">{
         bookGroup := router.Group("/books")
         </span><span class="cov8" title="1">{
-                // ✅ Public Route (Anyone Can View Books)
 
                 bookGroup.Use(middleware.AuthMiddleware())
                 bookGroup.GET("/:isbn", controllers.GetBookByISBN)
                 bookGroup.GET("/lib", controllers.GetBooksByLibrary)
-
                 bookGroup.Use(middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}))
                 bookGroup.POST("/", controllers.AddBook)
                 bookGroup.PUT("/:isbn", controllers.UpdateBook)
@@ -1357,16 +1352,12 @@ import (
 )
 
 // IssueRegistryRoutes registers routes for issued books
-func IssueRegistryRoutes(router *gin.Engine) <span class="cov0" title="0">{
+func IssueRegistryRoutes(router *gin.Engine) <span class="cov8" title="1">{
         issueGroup := router.Group("/issueregistry")
-        </span><span class="cov0" title="0">{
-                // Protect all routes with authentication
+        </span><span class="cov8" title="1">{
+
                 issueGroup.Use(middleware.AuthMiddleware())
-
-                // ✅ LibraryAdmin can see all issued books
                 issueGroup.GET("/admin", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllIssuedBooks)
-
-                // ✅ Readers can see their issued books
                 issueGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetIssuedBooksByReader)
         }</span>
 }
@@ -1402,22 +1393,14 @@ import (
 )
 
 // RequestRoutes registers book request routes
-func RequestRoutes(router *gin.Engine) <span class="cov0" title="0">{
+func RequestRoutes(router *gin.Engine) <span class="cov8" title="1">{
         requestGroup := router.Group("/requests")
-        </span><span class="cov0" title="0">{
-                // Protect all request routes with authentication
+        </span><span class="cov8" title="1">{
+
                 requestGroup.Use(middleware.AuthMiddleware())
-
-                // ✅ Only Readers can create book requests (Issue/Return)
                 requestGroup.POST("/", middleware.RoleMiddleware("Reader"), controllers.CreateRequest)
-
-                // ✅ Only LibraryAdmins can approve/reject requests
                 requestGroup.PUT("/:id/approve", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.ApproveRequest)
-
-                // ✅ Readers can view their own requests
                 requestGroup.GET("/user", middleware.RoleMiddleware("Reader"), controllers.GetUserRequests)
-
-                // ✅ LibraryAdmins can view all requests
                 requestGroup.GET("/allreq", middleware.RoleMiddlewareMultiple([]string{"LibraryAdmin", "Owner"}), controllers.GetAllRequestsForAdmin)
         }</span>
 }
@@ -1438,14 +1421,11 @@ import (
 func UserRoutes(router *gin.Engine) <span class="cov8" title="1">{
         userGroup := router.Group("/user")
         </span><span class="cov8" title="1">{
-                userGroup.POST("/register", controllers.RegisterUser) // ✅ Public (Anyone Can Register)
-
-                // Protected User Routes
+                userGroup.POST("/register", controllers.RegisterUser)
                 userGroup.Use(middleware.AuthMiddleware())
                 //userGroup.PUT("/role/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
                 userGroup.GET("/all", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
-                // ✅ Requires Authentication
-                userGroup.GET("/profile", middleware.AuthMiddleware(), controllers.GetUser) // ✅ Only Authenticated Users Can Fetch Their Profile
+                userGroup.GET("/profile", controllers.GetUser)
                 //userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
         }</span>
 
@@ -1630,7 +1610,7 @@ import (
 )
 
 // GetAllIssuedBooks fetches all issued books (LibraryAdmin Only)
-func GetAllIssuedBooks() ([]models.IssueRegistry, error) <span class="cov0" title="0">{
+func GetAllIssuedBooks() ([]models.IssueRegistry, error) <span class="cov8" title="1">{
         var issuedBooks []models.IssueRegistry
         err := config.DB.
                 Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
@@ -1640,20 +1620,20 @@ func GetAllIssuedBooks() ([]models.IssueRegistry, error) <span class="cov0" titl
                         return db.Select("id, name, email")
                 }</span>).
                 Find(&amp;issuedBooks).Error
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return issuedBooks, nil</span>
+        <span class="cov8" title="1">return issuedBooks, nil</span>
 }
 
 // GetIssuedBooksByReader fetches issued books for a specific reader
-func GetIssuedBooksByReader(readerID uint) ([]models.IssueRegistry, error) <span class="cov0" title="0">{
+func GetIssuedBooksByReader(readerID uint) ([]models.IssueRegistry, error) <span class="cov8" title="1">{
         var issuedBooks []models.IssueRegistry
         err := config.DB.Where("reader_id = ?", readerID).Find(&amp;issuedBooks).Error
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return issuedBooks, nil</span>
+        <span class="cov8" title="1">return issuedBooks, nil</span>
 }
 </pre>
 		
@@ -1724,12 +1704,12 @@ import (
 )
 
 // CreateRequest stores a new book request in the database
-func CreateRequest(request *models.RequestEvent) error <span class="cov0" title="0">{
+func CreateRequest(request *models.RequestEvent) error <span class="cov8" title="1">{
         return config.DB.Create(request).Error
 }</span>
 
 // ApproveRequest approves or rejects a book request
-func ApproveRequest(request *models.RequestEvent, approve bool) error <span class="cov0" title="0">{
+func ApproveRequest(request *models.RequestEvent, approve bool) error <span class="cov8" title="1">{
         // If rejecting, delete request and return
         if !approve </span><span class="cov0" title="0">{
                 request.Status = "Rejected"
@@ -1741,7 +1721,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error <span clas
         // config.DB.Save(request)
 
         // Process request type (Issue/Return)
-        <span class="cov0" title="0">if request.RequestType == "Issue" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if request.RequestType == "Issue" </span><span class="cov8" title="1">{
                 // Check if book is available
                 var book models.Book
                 fmt.Println("ok")
@@ -1749,12 +1729,12 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error <span clas
                         return errors.New("book not found")
                 }</span>
 
-                <span class="cov0" title="0">if book.AvailableCopies &lt;= 0 </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if book.AvailableCopies &lt;= 0 </span><span class="cov0" title="0">{
                         return errors.New("no available copies")
                 }</span>
 
                 // Decrease available copies
-                <span class="cov0" title="0">book.AvailableCopies -= 1
+                <span class="cov8" title="1">book.AvailableCopies -= 1
                 config.DB.Save(&amp;book)
 
                 // ✅ Fix: Store `ExpectedReturn` as a pointer
@@ -1773,9 +1753,9 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error <span clas
                         return err
                 }</span>
 
-                <span class="cov0" title="0">request.Status = "approved"
+                <span class="cov8" title="1">request.Status = "approved"
                 config.DB.Save(request)</span>
-        } else<span class="cov0" title="0"> if request.RequestType == "Return" </span><span class="cov0" title="0">{
+        } else<span class="cov8" title="1"> if request.RequestType == "Return" </span><span class="cov8" title="1">{
                 // Process book return
                 var issue models.IssueRegistry
                 if err := config.DB.Where("isbn = ? AND reader_id = ? AND issue_status = 'Issued'", request.ISBN, request.ReaderID).First(&amp;issue).Error; err != nil </span><span class="cov0" title="0">{
@@ -1783,7 +1763,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error <span clas
                 }</span>
 
                 // Mark as returned
-                <span class="cov0" title="0">now := time.Now()
+                <span class="cov8" title="1">now := time.Now()
                 issue.IssueStatus = "Returned"
                 issue.ReturnDate = &amp;now
 
@@ -1793,49 +1773,49 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error <span clas
 
                 // Increase available copies
                 var book models.Book
-                if err := config.DB.Where("isbn = ?", request.ISBN).First(&amp;book).Error; err == nil </span><span class="cov0" title="0">{
+                if err := config.DB.Where("isbn = ?", request.ISBN).First(&amp;book).Error; err == nil </span><span class="cov8" title="1">{
                         book.AvailableCopies += 1
                         config.DB.Save(&amp;book)
                 }</span>
-                <span class="cov0" title="0">request.Status = "Approved"
+                <span class="cov8" title="1">request.Status = "Approved"
                 config.DB.Save(request)</span>
         }
 
         // Delete request after processing
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
 // GetUserRequests fetches all requests made by a user
-func GetUserRequests(readerID uint) ([]models.RequestEvent, error) <span class="cov0" title="0">{
+func GetUserRequests(readerID uint) ([]models.RequestEvent, error) <span class="cov8" title="1">{
         var requests []models.RequestEvent
-        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov8" title="1">{
                 return db.Select("isbn", "title", "publisher", "lib_id")
         }</span>).Where("reader_id = ?", readerID).Find(&amp;requests).Error
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return requests, nil</span>
+        <span class="cov8" title="1">return requests, nil</span>
 }
 
 // GetRequestByID fetches a single request by its ID
-func GetRequestByID(requestID uint, request *models.RequestEvent) error <span class="cov0" title="0">{
-        return config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+func GetRequestByID(requestID uint, request *models.RequestEvent) error <span class="cov8" title="1">{
+        return config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov8" title="1">{
                 return db.Select("isbn", "title", "publisher", "lib_id")
         }</span>).First(request, requestID).Error
 }
 
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
-func GetAllRequests(libID uint) ([]models.RequestEvent, error) <span class="cov0" title="0">{
+func GetAllRequests() ([]models.RequestEvent, error) <span class="cov8" title="1">{
         var requests []models.RequestEvent
-        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov0" title="0">{
+        err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB </span><span class="cov8" title="1">{
                 return db.Select("isbn", "title", "publisher", "lib_id")
-        }</span>).Preload("User", func(db *gorm.DB) *gorm.DB <span class="cov0" title="0">{
+        }</span>).Preload("User", func(db *gorm.DB) *gorm.DB <span class="cov8" title="1">{
                 return db.Select("name", "email", "id")
-        }</span>).Where("lib_id=?", libID).Find(&amp;requests).Error
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        }</span>).Find(&amp;requests).Error
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return requests, nil</span>
+        <span class="cov8" title="1">return requests, nil</span>
 }
 </pre>
 		

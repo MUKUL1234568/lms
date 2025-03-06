@@ -170,8 +170,14 @@ func UpdateBook(c *gin.Context) {
 	}
 	// Call service to update book
 	if err := services.UpdateBook(isbn, &updatedBook); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
-		return
+		if err.Error() == "book not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		if err.Error() == "available copies can not be greater than total copies" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 	}
 
 	// Success response
@@ -200,10 +206,10 @@ func DeleteBook(c *gin.Context) {
 	}
 
 	if err := services.DeleteBook(isbn); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Success response
-	c.JSON(http.StatusOK, gin.H{"message": " One copies of book deleted successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "  book deleted"})
 }

@@ -60,7 +60,7 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 			return err
 		}
 
-		request.Status = "approved"
+		request.Status = "Approved"
 		config.DB.Save(request)
 	} else if request.RequestType == "Return" {
 		// Process book return
@@ -93,16 +93,16 @@ func ApproveRequest(request *models.RequestEvent, approve bool) error {
 }
 
 // GetUserRequests fetches all requests made by a user
-func GetUserRequests(readerID uint) ([]models.RequestEvent, error) {
-	var requests []models.RequestEvent
-	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
-		return db.Select("isbn", "title", "publisher", "lib_id")
-	}).Where("reader_id = ?", readerID).Find(&requests).Error
-	if err != nil {
-		return nil, err
-	}
-	return requests, nil
-}
+// func GetUserRequests(readerID uint) ([]models.RequestEvent, error) {
+// 	var requests []models.RequestEvent
+// 	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
+// 		return db.Select("isbn", "title", "publisher", "lib_id")
+// 	}).Where("reader_id = ?", readerID).Find(&requests).Error
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return requests, nil
+// }
 
 // GetRequestByID fetches a single request by its ID
 func GetRequestByID(requestID uint, request *models.RequestEvent) error {
@@ -112,13 +112,13 @@ func GetRequestByID(requestID uint, request *models.RequestEvent) error {
 }
 
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
-func GetAllRequests(libID uint) ([]models.RequestEvent, error) {
+func GetAllRequests() ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
 	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
 		return db.Select("isbn", "title", "publisher", "lib_id")
 	}).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("name", "email", "id")
-	}).Where("lib_id=?", libID).Find(&requests).Error
+	}).Find(&requests).Error
 	if err != nil {
 		return nil, err
 	}

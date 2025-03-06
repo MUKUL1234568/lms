@@ -14,51 +14,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	// "gorm.io/driver/sqlite"
-	// "gorm.io/gorm"
-	// "library-management-api/config"
-	// "library-management-api/models"
-	// "library-management-api/routes"
-	// "github.com/gin-gonic/gin"
-	// "gorm.io/driver/sqlite"
-	// "gorm.io/gorm"
-	// "library-management-api/config"
-	// "gorm.io/driver/sqlite"
-	// "gorm.io/gorm"
-	// "golang.org/x/crypto/bcrypt"
-	// "library-management-api/models"
-	// "library-management-api/services"
-	// "library-management-api/controllers"
-	// "library-management-api/services"
-	//"github.com/gin-gonic/gin"
 )
-
-// Mock Database Setup
-// var testDB *gorm.DB
-
-// // Test Main (Runs Once Before All Tests)
-// func TestMain(m *testing.M) {
-// 	fmt.Println("🚀 Setting up test environment...")
-
-// 	// Initialize In-Memory DB (Single Connection for All Tests)
-// 	var err error
-// 	testDB, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-// 	if err != nil {
-// 		panic("Failed to connect to test database")
-// 	}
-// 	testDB.AutoMigrate(&models.Library{}, &models.User{}, &models.Book{})
-// 	config.DB = testDB
-
-// 	// Setup Router Once
-
-// 	// Run Tests
-// 	code := m.Run()
-
-// 	// Cleanup (Optional)
-// 	fmt.Println("🛑 Cleaning up test environment...")
-
-// 	os.Exit(code)
-// }
 
 // Test Creating a Library
 func TestLibraryRoutes_CreateLibrary(t *testing.T) {
@@ -104,6 +60,28 @@ func TestLibraryRoutes_CreateLibrarywithRegisteredEmail(t *testing.T) {
 	// Validate Response: Should return 409 Conflict
 	assert.Equal(t, http.StatusConflict, rr.Code)
 	assert.Contains(t, rr.Body.String(), "user with this email already exists")
+
+	fmt.Println("✅ TestLibraryRoutes_CreateLibrarywithRegisteredEmail Passed")
+}
+func TestLibraryRoutes_CreateLibrarywithRegisteredlibname(t *testing.T) {
+	requestBody := map[string]string{
+		"library_name":   "alpha",
+		"owner_name":     "mukul",
+		"owner_email":    "mukulowner1@example.com", // Same email as previous test
+		"owner_password": "mukul123",
+		"owner_contact":  "9876543210",
+	}
+	body, _ := json.Marshal(requestBody)
+
+	req, _ := http.NewRequest("POST", "/libraries/", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	router := setupLibraryRouter()
+	rr := httptest.NewRecorder()
+	router.ServeHTTP(rr, req)
+
+	// Validate Response: Should return 409 Conflict
+	assert.Equal(t, http.StatusConflict, rr.Code)
+	assert.Contains(t, rr.Body.String(), "choose different library name")
 
 	fmt.Println("✅ TestLibraryRoutes_CreateLibrarywithRegisteredEmail Passed")
 }
@@ -318,59 +296,6 @@ func TestUserRoutes_GetallProfile(t *testing.T) {
 	fmt.Println("✅ TestUserRoutes_all user Passed")
 }
 
-// func TestUserRoutes_makeAdmin(t *testing.T) {
-// 	router := setupUserRouter()
-
-// 	// Get a valid token using specific credentials
-// 	token := getAuthToken("mukulowner@example.com", "mukul123")
-
-// 	// Only send the role in the body (not the ID)
-// 	BBody := map[string]string{
-// 		"role": "LibraryAdmin",
-// 	}
-// 	body, _ := json.Marshal(BBody)
-
-// 	// Use the user ID in the URL, not in the body
-// 	req, _ := http.NewRequest("PUT", "user/role/1", bytes.NewBuffer(body))
-// 	req.Header.Set("Content-Type", "application/json")
-// 	req.Header.Set("Authorization", "Bearer "+token) // Attach token
-
-// 	rr := httptest.NewRecorder()
-// 	router.ServeHTTP(rr, req)
-
-// 	// Check if the response status code is OK (200)
-// 	assert.Equal(t, http.StatusOK, rr.Code)
-
-// 	// Optionally, check the response body for confirmation of success
-// 	// assert.Contains(t, rr.Body.String(), "Admin") // Adjust based on expected response
-
-// 	fmt.Println(token)
-// 	fmt.Println("✅ TestUserRoutes_makeAdmin Passed")
-// }
-
-// func TestUserRoutes_makeaddmin1(t *testing.T) {
-// 	router := setupUserRouter()
-
-// 	// Get a valid token using specific credentials
-// 	token := getAuthToken("mukulowner@example.com", "mukul123")
-// 	BBody := map[string]string{
-// 		"role": "Reader",
-// 	}
-// 	body, _ := json.Marshal(BBody)
-
-// 	req, _ := http.NewRequest("PUT", "user/role/2", bytes.NewBuffer(body))
-// 	req.Header.Set("Content-Type", "application/json")
-// 	req.Header.Set("Authorization", "Bearer "+token) // Attach token
-
-// 	rr := httptest.NewRecorder()
-// 	router.ServeHTTP(rr, req)
-
-// 	assert.Equal(t, http.StatusOK, rr.Code)
-// 	// assert.Contains(t, rr.Body.String(), "Test User") // Adjust based on expected response
-// 	fmt.Println(token)
-// 	fmt.Println("✅ TestUserRoutes_GetProfile Passed")
-// }
-
 func TestLogin_Success(t *testing.T) {
 	r := SetUpauthroutes()
 
@@ -553,22 +478,6 @@ func TestGetallbookbylib(t *testing.T) {
 
 }
 
-// func GetallBookbyLib(t *testing.T) {
-
-// 	r := setupBookRouter()
-// 	token := getAuthToken("mukul@example.com", "mukul123")
-
-// 	req, _ := http.NewRequest("GET", "/oks/lib", nil)
-// 	req.Header.Set("Content-Type", "application/json")
-// 	req.Header.Set("Authorization", "Bearer "+token)
-
-// 	rr := httptest.NewRecorder()
-// 	r.ServeHTTP(rr, req)
-
-// 	assert.Equal(t, http.StatusOK, rr.Code)
-
-// }
-
 func TestGetallBookbyLibwithunautorizedperson(t *testing.T) {
 
 	r := setupBookRouter()
@@ -643,7 +552,7 @@ func TestUpdatebook(t *testing.T) {
 	}
 
 	jsonValue, _ := json.Marshal(book)
-	req, _ := http.NewRequest("PUT", "/books/1234567892345", bytes.NewBuffer(jsonValue))
+	req, _ := http.NewRequest("PATCH", "/books/1234567892345", bytes.NewBuffer(jsonValue))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
@@ -651,6 +560,29 @@ func TestUpdatebook(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestUpdatebookwithwrogcopies(t *testing.T) {
+
+	r := setupBookRouter()
+	token := getAuthToken("mukulowner@example.com", "mukul123")
+	book := models.Book{
+
+		Version:         "2st",
+		TotalCopies:     7,
+		AvailableCopies: 8,
+	}
+
+	jsonValue, _ := json.Marshal(book)
+	req, _ := http.NewRequest("PATCH", "/books/1234567892345", bytes.NewBuffer(jsonValue))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusBadRequest, rr.Code)
 
 }
 
@@ -665,7 +597,7 @@ func TestUpdatebookwithunauthorized(t *testing.T) {
 	}
 
 	jsonValue, _ := json.Marshal(book)
-	req, _ := http.NewRequest("PUT", "/books/1234567892345", bytes.NewBuffer(jsonValue))
+	req, _ := http.NewRequest("PATCH", "/books/1234567892345", bytes.NewBuffer(jsonValue))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
@@ -687,7 +619,7 @@ func TestUpdatebookwithwrongisbn(t *testing.T) {
 	}
 
 	jsonValue, _ := json.Marshal(book)
-	req, _ := http.NewRequest("PUT", "/books/1234567892340", bytes.NewBuffer(jsonValue))
+	req, _ := http.NewRequest("PATCH", "/books/1234567892340", bytes.NewBuffer(jsonValue))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
@@ -704,6 +636,176 @@ func TestDeletebook(t *testing.T) {
 	token := getAuthToken("mukulowner@example.com", "mukul123")
 
 	req, _ := http.NewRequest("DELETE", "/books/1234567892345", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestGetIssuedBookforOwner(t *testing.T) {
+
+	r := SetIssueroutes()
+	token := getAuthToken("mukulowner@example.com", "mukul123")
+
+	req, _ := http.NewRequest("GET", "/issueregistry/admin", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestGetIssuedBookforreader(t *testing.T) {
+
+	r := SetIssueroutes()
+	token := getAuthToken("mukul@example.com", "123")
+
+	req, _ := http.NewRequest("GET", "/issueregistry/user", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestAddrequest(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukul@example.com", "123")
+
+	BBody := map[string]string{
+		"request_type": "Issue",
+		"isbn":         "1234567892345",
+	}
+	body, _ := json.Marshal(BBody)
+
+	req, _ := http.NewRequest("POST", "/requests/", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusCreated, rr.Code)
+
+}
+func TestGetRequetbyuser(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukul@example.com", "123")
+
+	req, _ := http.NewRequest("GET", "/requests/user", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestGetRequetbyowner(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukulowner@example.com", "mukul123")
+
+	req, _ := http.NewRequest("GET", "/requests/allreq", nil)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestApproverequet(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukulowner@example.com", "mukul123")
+
+	BBody := map[string]bool{
+		"approve": true,
+	}
+	body, _ := json.Marshal(BBody)
+
+	req, _ := http.NewRequest("PUT", "/requests/1/approve", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusOK, rr.Code)
+
+}
+
+func TestApproverequetwithwronguser(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukul@example.com", "123")
+
+	BBody := map[string]bool{
+		"approve": true,
+	}
+	body, _ := json.Marshal(BBody)
+
+	req, _ := http.NewRequest("PUT", "/requests/1/approve", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusForbidden, rr.Code)
+
+}
+
+func TestAddrequestt(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukul@example.com", "123")
+
+	BBody := map[string]string{
+		"request_type": "Return",
+		"isbn":         "1234567892345",
+	}
+	body, _ := json.Marshal(BBody)
+
+	req, _ := http.NewRequest("POST", "/requests/", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	assert.Equal(t, http.StatusCreated, rr.Code)
+
+}
+
+func TestApproverequett(t *testing.T) {
+
+	r := SetrequestsRoutes()
+	token := getAuthToken("mukulowner@example.com", "mukul123")
+
+	BBody := map[string]bool{
+		"approve": true,
+	}
+	body, _ := json.Marshal(BBody)
+
+	req, _ := http.NewRequest("PUT", "/requests/2/approve", bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 

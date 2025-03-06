@@ -41,6 +41,16 @@ func UpdateBook(isbn string, updatedBook *models.Book) error {
 	}
 
 	// Update book details
+	if updatedBook.TotalCopies != 0 {
+		if updatedBook.AvailableCopies > updatedBook.TotalCopies {
+			return errors.New("available copies can not be greater than total copies")
+		}
+	} else {
+		if updatedBook.AvailableCopies > book.TotalCopies {
+			return errors.New("available copies can not be greater than total copies")
+		}
+	}
+
 	return config.DB.Model(&book).Updates(updatedBook).Error
 }
 func UpdateBookCopies(isbn string, totalcopies int) error {
@@ -59,25 +69,9 @@ func UpdateBookCopies(isbn string, totalcopies int) error {
 
 // DeleteBook removes a book from the library
 func DeleteBook(isbn string) error {
-	var book models.Book
 
-	// Check if the book exists
-	if err := config.DB.Where("isbn = ?", isbn).First(&book).Error; err != nil {
-		return errors.New("book not found")
-	}
-
-	// If available copies > 0, decrement instead of deleting
-	if book.AvailableCopies > 0 {
-		book.AvailableCopies -= 1
-		book.TotalCopies -= 1
-		return config.DB.Save(&book).Error
-
-	}
-
-	// If no copies left, delete the book
-	result := config.DB.Where("isbn = ?", isbn).Delete(&models.Book{})
-	if result.RowsAffected == 0 {
-		return errors.New("no book to delete")
+	if err := config.DB.Where("isbn = ?", isbn).Delete(&models.Book{}).Error; err != nil {
+		return err
 	}
 
 	return nil
