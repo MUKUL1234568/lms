@@ -10,7 +10,7 @@ type Book struct {
 	Publisher       string          `gorm:"not null" json:"publisher"`
 	Version         string          `json:"version,omitempty"`
 	TotalCopies     int             `gorm:"not null" json:"total_copies"`
-	AvailableCopies int             `gorm:"not null" json:"available_copies"`
+	AvailableCopies int             ` json:"available_copies"`
 	IssueRecords    []IssueRegistry `gorm:"foreignKey:ISBN" json:"issue_records"`
 	Requests        []RequestEvent  `gorm:"foreignKey:ISBN" json:"requests"`
 }

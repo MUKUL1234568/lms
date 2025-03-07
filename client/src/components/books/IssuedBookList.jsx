@@ -18,7 +18,7 @@ const IssuedBookList = ({ issueregistry}) => {
               <strong>Issue Date:</strong> {issuedBook.issue_date}
             </p>
             <p>
-              <strong>Return Date:</strong> {issuedBook.returnDate}
+              <strong>Return Date:</strong> {issuedBook.return_date}
             </p>
             <p>
               <strong>Status:</strong> {issuedBook.issue_status}

@@ -21,7 +21,7 @@ const BookList = ({ books, onEdit, onRemove }) => {
     // Check if this book is issued to any user
     const hasIssuedRecords =
       book.issue_records && book.issue_records.some(
-        (record) => record.status.toLowerCase() === "issued" && record.isbn === book.isbn
+        (record) => record.issue_status.toLowerCase() === "issued" && record.isbn === book.isbn
       )
 
     if (hasPendingRequests || hasIssuedRecords) {
@@ -59,7 +59,7 @@ const BookList = ({ books, onEdit, onRemove }) => {
               <button className="edit-btn" onClick={() => onEdit(book)}>
                 Edit
               </button>
-              <button className="remove-btn" onClick={() => handleRemove(book)}>
+              <button className="remove-btn"  onClick={() => handleRemove(book)}>
                 Remove
               </button>
             </div>

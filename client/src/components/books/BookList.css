@@ -46,11 +46,11 @@
   color: #34495e;
 }
 
-.book-actions {
+/* .book-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 1rem;
-}
+} */
 
 .edit-btn,
 .remove-btn {
@@ -62,7 +62,7 @@
 }
 
 .edit-btn {
-  background-color: #3498db;
+  background-color: green;
   color: white;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .remove-btn {
-  background-color: #e74c3c;
+  background-color: red;
   color: white;
 }
 

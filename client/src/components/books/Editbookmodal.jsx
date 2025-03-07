@@ -24,7 +24,7 @@ const EditBookModal = ({ book, onClose, onUpdate }) => {
     }
   
     const issuedBooksCount = editedBook.issue_records
-      ? editedBook.issue_records.filter(record => record.status.toLowerCase() === "issued").length
+      ? editedBook.issue_records.filter(record => record.issue_status.toLowerCase() === "issued").length
       : 0
          console.log(issuedBooksCount)
          console.log(Number(editedBook.total_copies))

@@ -1,0 +1,79 @@
+.admin-management {
+    padding: 1rem;
+  }
+  
+  .search-bar {
+    margin-bottom: 1rem;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .admin-section,
+  .non-admin-section {
+    margin-bottom: 2rem;
+  }
+  
+  .user-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .user-item {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .user-item h4 {
+    margin: 0;
+    color: #2c3e50;
+  }
+  
+  .user-item p {
+    margin: 0.5rem 0 0;
+    color: #7f8c8d;
+  }
+  
+  .revoke-admin-btn,
+.make-admin-btn {
+  width: auto; /* Adjust width based on content */
+  height: auto; /* Adjust height based on content */
+  padding: 0.3rem 0.5rem; /* Slightly increased padding */
+  font-size: 0.75rem; /* Slightly bigger font */
+  border: 0.8px solid #ccc; /* Thin but visible border */
+  border-radius: 2px; /* Small rounded edges */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+  
+  .revoke-admin-btn {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .revoke-admin-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  .make-admin-btn {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .make-admin-btn:hover {
+    background-color: #2980b9;
+  }
+  
+  

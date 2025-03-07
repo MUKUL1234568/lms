@@ -33,9 +33,9 @@ function LoginModal({ onClose, onLogin }) {
       if (userRole === "LibraryAdmin") {
         navigate("/admindashboard");
       } else if (userRole === "Owner") {
-        navigate("/admindashboard");
+        navigate("/ownerdashboard");
       } else if (userRole === "Reader") {
-        navigate("/reader-dashboard");
+        navigate("/readerdashboard");
       } else {
         navigate("/"); // Default route if role is undefined
       }

@@ -15,7 +15,7 @@ func UserRoutes(router *gin.Engine) {
 		userGroup.Use(middleware.AuthMiddleware())
 		userGroup.GET("/", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.GetUsersByLibrary)
 		userGroup.GET("/profile", controllers.GetUser)
-		userGroup.PUT("/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
+		userGroup.PATCH("/:id", middleware.RoleMiddleware("Owner"), controllers.MakeAdmin)
 		userGroup.DELETE("/:id", middleware.RoleMiddlewareMultiple([]string{"Owner", "LibraryAdmin"}), controllers.DeleteUser)
 	}
 

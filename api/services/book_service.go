@@ -2,9 +2,11 @@ package services
 
 import (
 	"errors"
-	"gorm.io/gorm"
+	"fmt"
 	"library-management-api/config"
 	"library-management-api/models"
+
+	"gorm.io/gorm"
 )
 
 // AddBook adds a new book to the library
@@ -13,12 +15,20 @@ func AddBook(book *models.Book) error {
 }
 
 // GetBooksByLibrary retrieves all books in a specific library
-func GetBooksByLibrary(libID uint) ([]models.Book, error) {
+func GetBooksByLibrary(libID uint, userRole string) ([]models.Book, error) {
 	var books []models.Book
-	err := config.DB.Preload("IssueRecords").Preload("Requests").Where("lib_id = ?", libID).Find(&books).Error
+	var err error
+
+	if userRole == "LibraryAdmin" || userRole == "Owner" {
+		err = config.DB.Preload("IssueRecords").Preload("Requests").Where("lib_id = ?", libID).Find(&books).Error
+	} else {
+		err = config.DB.Where("lib_id = ?", libID).Find(&books).Error
+	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return books, nil
 }
 
@@ -39,7 +49,7 @@ func UpdateBook(isbn string, updatedBook *models.Book) error {
 	if err != nil {
 		return errors.New("book not found")
 	}
-
+	fmt.Println(updatedBook.AvailableCopies)
 	// Update book details
 	if updatedBook.TotalCopies != 0 {
 		if updatedBook.AvailableCopies > updatedBook.TotalCopies {

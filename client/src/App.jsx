@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Admin from "./pages/LibraryAdminDashboard.jsx";
-// import UserDashboard from "./pages/UserDashboard";
-// import NotFound from "./pages/NotFound";
-import LoginForm from "./components/auth/LoginModal.jsx";
-// import RegisterForm from "./components/auth/RegisterForm";
+import Owner from "./pages/OwnerDashboard.jsx"
+import UserDashboard from "./pages/UserDashboard.jsx";
+ 
+
+ 
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admindashboard" element={<Admin/>} />
-        {/* <Route path="/user" element={<UserDashboard />} /> */}
+        <Route path="ownerdashboard" element={<Owner/>}/>
+        <Route path="/readerdashboard" element={<UserDashboard />} />
        
       </Routes>
     </Router>

@@ -37,7 +37,7 @@ function Header() {
       if(role=="LibraryAdmin")
         navigate("/admindashboard")
       else if(role=="Owner")
-        navigate("/admindashboard")
+        navigate("/ownerdashboard")
       else
       navigate("/readerdash")
   }

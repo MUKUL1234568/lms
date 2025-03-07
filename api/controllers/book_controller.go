@@ -52,8 +52,13 @@ func AddBook(c *gin.Context) {
 	} // ✅ Convert float64 to uint
 
 	// Create Book using LibID from the request
+	userrole, err := GetUserRole(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-	books, err := services.GetBooksByLibrary(libID)
+	books, err := services.GetBooksByLibrary(libID, userrole)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -108,7 +113,13 @@ func GetBooksByLibrary(c *gin.Context) {
 		return
 	}
 
-	books, err := services.GetBooksByLibrary(libID)
+	userrole, err := GetUserRole(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	books, err := services.GetBooksByLibrary(libID, userrole)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

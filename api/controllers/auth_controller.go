@@ -63,3 +63,17 @@ func GetLibraryID(c *gin.Context) (uint, error) {
 
 	return uint(libIDFloat), nil
 }
+
+func GetUserRole(c *gin.Context) (string, error) {
+	roleInterface, exists := c.Get("role")
+	if !exists {
+		return "", errors.New("user role not found in session")
+	}
+
+	role, ok := roleInterface.(string)
+	if !ok {
+		return "", errors.New("invalid role format")
+	}
+
+	return role, nil
+}
