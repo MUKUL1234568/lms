@@ -39,7 +39,7 @@ function Header() {
       else if(role=="Owner")
         navigate("/ownerdashboard")
       else
-      navigate("/readerdash")
+      navigate("/readerdashboard")
   }
   const openLoginModal = () => {
     setShowSignUp(false); // Close sign-up if open

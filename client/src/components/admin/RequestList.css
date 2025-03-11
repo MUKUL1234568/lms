@@ -1,52 +1,154 @@
+ /* General Container */
+.request-list-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Heading */
+h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 80%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  border: 2px solid #bdc3c7;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  text-align: center;
+}
+
+.search-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Request Grid */
 .request-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Request Card */
+.request-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.request-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.request-info {
+  margin: 10px 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon {
+  font-size: 1.2rem;
+  color: #3498db;
+}
+
+/* Request Actions */
+.request-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Dropdown */
+.action-select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 2px solid #bdc3c7;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.action-select:focus {
+  border-color: #3498db;
+}
+
+/* Action Buttons */
+.action-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.approve {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.approve:hover {
+  background-color: #27ae60;
+}
+
+.reject {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reject:hover {
+  background-color: #c0392b;
+}
+
+/* No Requests Message */
+.no-requests {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .search-input {
+    width: 90%;
   }
-  
-  .request-item {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .request-item p {
-    margin: 0 0 1rem 0;
-    color: #34495e;
-  }
-  
+
   .request-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .action-select {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .search-input {
+    width: 100%;
   }
-  
-  .action-btn {
-    padding: 0.5rem 1rem;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .action-btn:hover:not(:disabled) {
-    background-color: #2980b9;
-  }
-  
-  .action-btn:disabled {
-    background-color: #95a5a6;
-    cursor: not-allowed;
-  }
-  
-  
+}

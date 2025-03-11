@@ -1,58 +1,133 @@
+ /* General container styles */
+.issued-book-list-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Heading styles */
+.heading {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+/* Search bar styles */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 80%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  border: 2px solid #bdc3c7;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+/* Issued book list grid */
 .issued-book-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Issued book item styles */
+.issued-book-item {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.issued-book-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.issued-book-item h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-size: 1.6rem;
+}
+
+.issued-book-item p {
+  margin: 0.5rem 0;
+  color: #34495e;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.issued-book-item p svg {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+/* Status styling */
+.status {
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.status.pending {
+  background-color: #f39c12;
+  color: white;
+}
+
+.status.returned {
+  background-color: #27ae60;
+  color: white;
+}
+
+.status.overdue {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* No issued books message */
+.no-issued-books {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .search-input {
+    width: 90%;
   }
-  
+
   .issued-book-item {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
   }
-  
-  .issued-book-item h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
+}
+
+@media (max-width: 480px) {
+  .heading {
+    font-size: 2rem;
   }
-  
-  .issued-book-item p {
-    margin: 0.5rem 0;
-    color: #34495e;
+
+  .search-input {
+    width: 100%;
   }
-  
-  .issued-book-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-  
-  .issued-book-actions button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .issued-book-actions button:first-child {
-    background-color: #2ecc71;
-    color: white;
-  }
-  
-  .issued-book-actions button:first-child:hover {
-    background-color: #27ae60;
-  }
-  
-  .issued-book-actions button:last-child {
-    background-color: #e74c3c;
-    color: white;
-  }
-  
-  .issued-book-actions button:last-child:hover {
-    background-color: #c0392b;
-  }
-  
-  
+}

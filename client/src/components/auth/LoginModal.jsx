@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginModal.css";
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
 
 function LoginModal({ onClose, onLogin }) {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ function LoginModal({ onClose, onLogin }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Clear any previous error
 
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
@@ -23,13 +23,16 @@ function LoginModal({ onClose, onLogin }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Login failed");
+        // Show the specific error message from the API
+        const errorMessage = data.error || "Login failed. Please try again.";
+        throw new Error(errorMessage);
       }
 
       localStorage.setItem("token", data.token);
-      const decodetoken =jwtDecode(data.token)
-      console.log(decodetoken)
-      const userRole=decodetoken.role
+      const decodedToken = jwtDecode(data.token);
+      console.log(decodedToken);
+      const userRole = decodedToken.role;
+
       if (userRole === "LibraryAdmin") {
         navigate("/admindashboard");
       } else if (userRole === "Owner") {
@@ -40,11 +43,10 @@ function LoginModal({ onClose, onLogin }) {
         navigate("/"); // Default route if role is undefined
       }
 
-      onLogin(); // ✅ Notify Header to update login state
-     
-      onClose(); // ✅ Close modal
+      onLogin(); // Notify parent to update login state
+      onClose(); // Close the modal
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Display the error message from API or generic message
     }
   };
 
@@ -52,7 +54,7 @@ function LoginModal({ onClose, onLogin }) {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>🔐 Login</h2>
-        {error && <p className="error">{error}</p>}
+        {error && <p className="error">{error}</p>} {/* Display error message */}
         <form onSubmit={handleLogin}>
           <input
             type="email"

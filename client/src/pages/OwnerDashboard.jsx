@@ -319,7 +319,7 @@ try{
           )}
            {activeTab === "requests" && (
             <>
-              <h2>Pending Requests</h2>
+              {/* <h2>Pending Requests</h2> */}
               <RequestList requests={requests}  onApprove={approveRequest} onReject={rejectRequest}
               />
             </>
@@ -332,7 +332,7 @@ try{
           )}
           {activeTab === "issued" && (
             <>
-              <h2>Issued Books</h2>
+               
               <IssuedBookList  issueregistry={issueregistry}  />
             </>
           )}

@@ -6,8 +6,8 @@ import UserSidebar from "../components/user/UserSidebar"
 import Header from "../components/layout/Header"
 import BookList from "../components/user/BookList"
 import RequestList from "../components/user/RequestList"
-// import IssuedBookList from "./IssuedBookList"
-// import UserProfile from "./UserProfile"
+import IssuedBookList from "../components/user/IssuedBooklist"
+ import UserProfile from "../components/user/UserProfile"
 import "./UserDashboard.css"
 
 const UserDashboard = () => {
@@ -46,22 +46,25 @@ const UserDashboard = () => {
 
   const handleBookRequest = async (isbn) => {
     try {
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:8080/request",
+        "http://localhost:8080/request/",
         { isbn, request_type: "Issue" },
-        { headers: { Authorization: `Bearer ${token}` } },
-      )
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
       if (response.status === 201) {
-        alert("Book request submitted successfully")
-        fetchUserProfile() // Refresh user profile to update requests
+        alert("Book request submitted successfully");
+        fetchUserProfile(); // Refresh user profile to update requests
+      } else {
+        alert(response.data.error || "Failed to submit book request.");
       }
     } catch (error) {
-      console.error("Error requesting book:", error)
-      alert("Failed to submit book request. Please try again.")
+      console.error("Error requesting book:", error);
+      alert(error.response?.data?.message || "Failed to submit book request. Please try again.");
     }
-  }
-
+  };
+  
   return (
     <><Header/>
     <div className="user-dashboard">
@@ -69,9 +72,9 @@ const UserDashboard = () => {
       <UserSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="dashboard-content">
         {activeTab === "books" && <BookList books={books} onRequestBook={handleBookRequest} />}
-        {activeTab === "requests" && userProfile && <RequestList requests={userProfile.requests} />}
-        {/* {activeTab === "issued" && userProfile && <IssuedBookList issuedBooks={userProfile.issue_records} />}
-        {activeTab === "profile" && userProfile && <UserProfile user={userProfile} />} */}
+        {activeTab === "requests" && userProfile && <RequestList requests={userProfile.requests}  />}
+        {activeTab === "issued" && userProfile && <IssuedBookList issuedBooks={userProfile.issue_records} fetchUserProfile={fetchUserProfile} />}
+        {activeTab === "profile" && userProfile && <UserProfile user={userProfile} />}
       </div>
     </div>
     </>
