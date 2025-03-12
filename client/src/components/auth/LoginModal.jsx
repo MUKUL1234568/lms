@@ -72,7 +72,8 @@ function LoginModal({ onClose, onLogin }) {
           />
           <button type="submit">Login</button>
         </form>
-        <button className="close-btn" onClick={onClose}>Close</button>
+        <button className="close-btn" onClick={onClose}>&times;</button>
+
       </div>
     </div>
   );

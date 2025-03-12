@@ -89,7 +89,8 @@ function SignUpModal({ onClose, onRegisterSuccess }) {
 
           <button type="submit">Sign Up</button>
         </form>
-        <button className="close-btn" onClick={onClose}>Close</button>
+        <button className="close-btn" onClick={onClose}>&times;</button>
+
       </div>
     </div>
   );

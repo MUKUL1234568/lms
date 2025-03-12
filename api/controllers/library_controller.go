@@ -79,3 +79,12 @@ func GetLibraries(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"libraries": libraries})
 }
+
+func GetStates(c *gin.Context) {
+	states, err := services.GetStats()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"states": states})
+}

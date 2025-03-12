@@ -54,3 +54,41 @@ func Getlibbyid(id uint) error {
 	err := config.DB.Where("id=?", id).First(&library).Error
 	return err
 }
+
+// Stats holds the count of users, libraries, and total book copies
+type Stats struct {
+	TotalLibraries int `json:"total_libraries"`
+	TotalUsers     int `json:"total_users"`
+
+	TotalBooks int `json:"total_books"`
+}
+
+// GetStats retrieves the total number of users, libraries, and total book copies
+func GetStats() (*Stats, error) {
+	var stats Stats
+	var userCount int64
+	var libraryCount int64
+	var bookCopies int64
+
+	// Count total users
+	if err := config.DB.Model(&models.User{}).Count(&userCount).Error; err != nil {
+		return nil, err
+	}
+
+	// Count total libraries
+	if err := config.DB.Model(&models.Library{}).Count(&libraryCount).Error; err != nil {
+		return nil, err
+	}
+
+	// Sum total book copies
+	if err := config.DB.Model(&models.Book{}).Select("COALESCE(SUM(total_copies), 0)").Scan(&bookCopies).Error; err != nil {
+		return nil, err
+	}
+
+	// Convert int64 to int
+	stats.TotalUsers = int(userCount)
+	stats.TotalLibraries = int(libraryCount)
+	stats.TotalBooks = int(bookCopies)
+
+	return &stats, nil
+}

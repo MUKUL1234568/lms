@@ -14,6 +14,7 @@ func LibraryRoutes(router *gin.Engine) {
 	{
 		libGroup.POST("/", controllers.CreateLibrary) // ✅ Create Library with Owner
 		libGroup.GET("/", controllers.GetLibraries)   // ✅ Add this in your routes
+		libGroup.GET("/states", controllers.GetStates)
 
 	}
 }
