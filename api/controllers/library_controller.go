@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"library-management-api/models"
 	"library-management-api/services"
 	"library-management-api/validator"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateLibrary handles the creation of a new library with an owner
@@ -82,6 +83,21 @@ func GetLibraries(c *gin.Context) {
 
 func GetStates(c *gin.Context) {
 	states, err := services.GetStats()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"states": states})
+}
+
+func GetStatesBylib(c *gin.Context) {
+
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	states, err := services.GetStatsBylib(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

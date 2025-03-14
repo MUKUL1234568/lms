@@ -31,6 +31,12 @@ function SignUpModal({ onClose, onRegisterSuccess }) {
     e.preventDefault();
     setError("");
 
+    // ✅ Validate name (No digits allowed)
+    if (!/^[A-Za-z\s]+$/.test(name)) {
+      setError("Name should only contain letters and spaces.");
+      return;
+    }
+
     if (!selectedLibID) {
       setError("Please select a library.");
       return;
@@ -72,10 +78,14 @@ function SignUpModal({ onClose, onRegisterSuccess }) {
         {error && <p className="error">{error}</p>}
         {success && <p className="success">✅ Sign-up successful! Redirecting to login...</p>}
         <form onSubmit={handleSignUp}>
-          <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <input type="text" placeholder="Contact Number" value={contactNumber} onChange={(e) => setContactNumber(e.target.value)} />
+          <input type="text" placeholder="Full Name" value={name} 
+            onChange={(e) => setName(e.target.value)} required />
+          <input type="email" placeholder="Email" value={email} 
+            onChange={(e) => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" value={password} 
+            onChange={(e) => setPassword(e.target.value)} required />
+          <input type="text" placeholder="Contact Number" value={contactNumber} 
+            onChange={(e) => setContactNumber(e.target.value)} />
 
           {/* ✅ Library Selection Dropdown */}
           <select value={selectedLibID} onChange={(e) => setSelectedLibID(e.target.value)} required>

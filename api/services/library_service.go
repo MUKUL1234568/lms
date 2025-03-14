@@ -92,3 +92,42 @@ func GetStats() (*Stats, error) {
 
 	return &stats, nil
 }
+
+type Statsl struct {
+	TotalIssuedBook int `json:"total_issued_book"`
+	TotalUsers      int `json:"total_users"`
+
+	TotalBooks int `json:"total_books"`
+}
+
+func GetStatsBylib(libId uint) (*Statsl, error) {
+	var stats Statsl
+	var userCount int64
+	var totalIssuedBook int64
+	var bookCopies int64
+
+	// Count total users for the given libId
+	if err := config.DB.Model(&models.User{}).Where("lib_id = ?", libId).Count(&userCount).Error; err != nil {
+		return nil, err
+	}
+
+	// Sum total book copies for books with the given libId
+	if err := config.DB.Model(&models.Book{}).Where("lib_id = ?", libId).Select("COALESCE(SUM(total_copies), 0)").Scan(&bookCopies).Error; err != nil {
+		return nil, err
+	}
+
+	// Count total issued books for books belonging to the given libId
+	if err := config.DB.Model(&models.IssueRegistry{}).
+		Joins("JOIN books ON books.isbn = issue_registries.isbn").
+		Where("books.lib_id = ? AND issue_registries.issue_status = ?", libId, "Issued").
+		Count(&totalIssuedBook).Error; err != nil {
+		return nil, err
+	}
+
+	// Convert int64 to int
+	stats.TotalUsers = int(userCount)
+	stats.TotalIssuedBook = int(totalIssuedBook)
+	stats.TotalBooks = int(bookCopies)
+
+	return &stats, nil
+}

@@ -13,9 +13,15 @@ const AddBookModal = ({ onClose, onAdd }) => {
       return false
     }
     
+    if (!/^[A-Za-z\s,]+$/.test(newBook.authors)) {
+      setError("Author name must contain only letters, spaces, and commas.")
+      return false
+    }
+  
     setError("")
     return true
   }
+  
 
   const handleSubmit = (e) => {
     e.preventDefault()

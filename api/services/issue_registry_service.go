@@ -8,16 +8,19 @@ import (
 )
 
 // GetAllIssuedBooks fetches all issued books (LibraryAdmin Only)
-func GetAllIssuedBooks() ([]models.IssueRegistry, error) {
+func GetAllIssuedBooks(libId uint) ([]models.IssueRegistry, error) {
 	var issuedBooks []models.IssueRegistry
 	err := config.DB.
+		Joins("JOIN books ON books.isbn = issue_registries.isbn").
+		Where("books.lib_id = ?", libId). // Filter by book's lib_id
 		Preload("Book", func(db *gorm.DB) *gorm.DB {
-			return db.Select("isbn, title, authors")
+			return db.Select("isbn, title, authors, lib_id")
 		}).
 		Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id, name, email")
+			return db.Select("id, name, email, lib_id")
 		}).
 		Find(&issuedBooks).Error
+
 	if err != nil {
 		return nil, err
 	}

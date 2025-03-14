@@ -28,6 +28,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       >
         <FaBookOpen className="sidebar-icon" /> Issued Books
       </button>
+      <button
+        className={`sidebar-btn ${activeTab === "allrequests" ? "active" : ""}`}
+        onClick={() => setActiveTab("allrequests")}
+      >
+        <FaClipboardList className="sidebar-icon" /> Requests History
+      </button>
     </div>
   )
 }

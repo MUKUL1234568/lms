@@ -41,7 +41,7 @@ function Home() {
       description: "Organize your books with intelligent categorization and tagging systems.",
       icon: "📚",
       image:  "/assets/Library.jpeg",
-      story: "The New York Public Library reduced cataloging time by 60% after implementing our smart system."
+      story: "The LibraEase Public Library reduced cataloging time by 60% after implementing our smart system."
     },
     {
       id: "discover",
@@ -210,7 +210,10 @@ useEffect(() => {
     
     if (!formData.userName || formData.userName.length < 2) {
       errors.userName = "Name must be at least 2 characters";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.userName)) {
+      errors.userName = "Name must contain only letters and spaces";
     }
+    
     
     if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Please enter a valid email address";
@@ -263,13 +266,19 @@ useEffect(() => {
         });
   
       } catch (error) {
+        // Check if error.response is available (API error response)
+        const errorMessage = error.response && error.response.data
+          ? error.response.data.error || "Failed to create library. Please try again."
+          : "Failed to create library. Please try again.";
+          
         console.error("Error creating library:", error);
-        alert("Failed to create library. Please try again.");
+        alert(errorMessage);  // Display the error message from the API
       } finally {
         setIsSubmitting(false);
       }
     }
-  };
+};
+
 
   // Format large numbers with commas
   const formatNumber = (num) => {

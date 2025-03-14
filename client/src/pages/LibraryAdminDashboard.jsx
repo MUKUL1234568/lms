@@ -1,4 +1,4 @@
-
+ 
 
 import { useEffect, useState } from "react"
 import Header from "../components/layout/Header"
@@ -11,14 +11,16 @@ import Dashboard from "../components/admin/Dashboard"
  import IssuedBookList from "../components/books/IssuedBookList" 
 import AddBookModal from "../components/books/AddBookModal"
  import EditBookModal from "../components/books/Editbookmodal"
-import "./admin.css"
+import "./OwnerDashboard.css"
+ 
+import ALLRequestList from "../components/admin/AllRequestList"
 
 const admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard")
   const [showAddBookModal, setShowAddBookModal] = useState(false)
   const [showEditBookModal, setShowEditBookModal] = useState(false)
   const [editingBook, setEditingBook] = useState(null)
-  const [books, setBooks] = useState([])
+   
   const [users, setUsers] = useState([])
    const [requests, setRequests] = useState([])
    const [issueregistry,setissueregistry]=useState([])
@@ -45,27 +47,7 @@ const admin = () => {
   }
  };
 
-  const fetchbook= async ()=>{
-    const token =localStorage.getItem("token");
   
-    try{
-      const response =await axios.get("http://localhost:8080/book/",{
-        headers:{
-            Authorization:` Bearer ${token}`,
-        },
-      });
-     
-      if(response.status==200)
-      {
-        setBooks(response.data.books)
-      }
-      else{
-        console.log("error in fetching the books from database")
-      }
-    } catch(error){
-        console.error("error in fetching the ",error)
-    }
-  };
   const fetchuser= async ()=>{
     const token =localStorage.getItem("token");
   
@@ -111,7 +93,7 @@ const admin = () => {
     }
   };
   useEffect(()=>{
-    fetchbook();
+    
     fetchuser();
     fetchrequest();
     fetchIssueregistry();
@@ -266,13 +248,36 @@ try{
   //   setIssuedBooks(issuedBooks.map((book) => (book.id === id ? { ...book, status } : book)))
   // }
 
+  const updateUserRole = async (userId, newRole) => {
+    const token = localStorage.getItem("token")
+    try {
+      const response = await axios.patch(
+        `http://localhost:8080/user/${userId}`,
+        { role: newRole },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      if (response.status === 200) {
+        setUsers(users.map((user) => (user.id === userId ? { ...user, role: newRole } : user)))
+      } else {
+        console.error("Failed to update user role")
+      }
+    } catch (error) {
+      console.error("Error updating user role", error)
+    }
+  }
+
   return (
     <><Header />
     <div className="app">
       <div className="main-content">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="content">
-        {activeTab === "dashboard" && <Dashboard books={books} issuedBooks={issueregistry} users={users} />}
+        {activeTab === "dashboard" && <Dashboard />}
           {activeTab === "books" && (
             <>
               <div className="content-header">
@@ -284,7 +289,6 @@ try{
                 </div>
               </div>
               <BookList
-                books={books}
                 onEdit={(book) => {
                   setEditingBook(book)
                   setShowEditBookModal(true)
@@ -295,7 +299,7 @@ try{
           )}
            {activeTab === "requests" && (
             <>
-              
+              {/* <h2>Pending Requests</h2> */}
               <RequestList requests={requests}  onApprove={approveRequest} onReject={rejectRequest}
               />
             </>
@@ -303,15 +307,17 @@ try{
           {activeTab === "users" && (
             <>
               <h2>User List</h2>
-              <UserList users={users} issuedBooks={issueregistry} books={books}/>
+              <UserList users={users}  />
             </>
           )}
           {activeTab === "issued" && (
             <>
-              
+               
               <IssuedBookList  issueregistry={issueregistry}  />
             </>
           )}
+            {activeTab === "allrequests"  && <ALLRequestList requests={requests}  />}
+            
         </div>
       </div>
       {showAddBookModal && <AddBookModal onClose={() => setShowAddBookModal(false)} onAdd={addBook} />}

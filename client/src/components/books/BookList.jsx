@@ -1,12 +1,15 @@
  "use client"
 
 import "./BookList.css"
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import { FaBook, FaUser, FaBarcode, FaBuilding, FaTrash, FaEdit, FaCopy } from "react-icons/fa"
+ 
 
-const BookList = ({ books = [], onEdit, onRemove }) => {
+const BookList = ({books,onEdit, onRemove }) => {
   const [searchTerm, setSearchTerm] = useState("")
+  
 
+  
   const filteredBooks = books.filter(
     (book) =>
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,6 +37,7 @@ const BookList = ({ books = [], onEdit, onRemove }) => {
 
     onRemove(book.isbn)
   }
+  
 
   return (
     <div className="book-list-container">

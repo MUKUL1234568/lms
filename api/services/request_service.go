@@ -112,13 +112,19 @@ func GetRequestByID(requestID uint, request *models.RequestEvent) error {
 }
 
 // GetAllRequests fetches all requests (Only for LibraryAdmins)
-func GetAllRequests() ([]models.RequestEvent, error) {
+func GetAllRequests(libID uint) ([]models.RequestEvent, error) {
 	var requests []models.RequestEvent
-	err := config.DB.Preload("Book", func(db *gorm.DB) *gorm.DB {
-		return db.Select("isbn", "title", "publisher", "lib_id")
-	}).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("name", "email", "id")
-	}).Find(&requests).Error
+	err := config.DB.
+		Joins("JOIN books ON books.isbn = request_events.isbn").
+		Where("books.lib_id = ?", libID). // Filter by book's lib_id
+		Preload("Book", func(db *gorm.DB) *gorm.DB {
+			return db.Select("isbn", "title", "publisher", "lib_id", "total_copies", "available_copies")
+		}).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "name", "email", "lib_id")
+		}).
+		Find(&requests).Error
+
 	if err != nil {
 		return nil, err
 	}

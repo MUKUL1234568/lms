@@ -1,26 +1,59 @@
-import { Bar, Pie } from "react-chartjs-2"
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js"
-import "./Dashboard.css"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import "./Dashboard.css";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement)
+ChartJS.register(ArcElement, Tooltip, Legend);
 
-const Dashboard = ({ books, issuedBooks, users }) => {
-  // Calculate total number of copies
-  const totalCopies = books.reduce((sum, book) => sum + (book.total_copies || 0), 0)
+const Dashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Count only books that are currently issued
-  const currentlyIssuedBooks = issuedBooks.filter(book => book.issue_status?.toLowerCase() === "issued").length
+  // Retrieve the token from localStorage
+  const token = localStorage.getItem("token");
 
+  // Assuming libId is also stored or passed as needed
+    // Replace with dynamic value if necessary
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/libraries/states/id`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Extracting states from the response
+        const { states } = response.data;
+
+        setStats(states);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading message while fetching data
+  }
+
+  // Data for the Pie chart
   const bookData = {
     labels: ["Total Books", "Currently Issued Books"],
     datasets: [
       {
-        data: [totalCopies, currentlyIssuedBooks],
+        data: [stats.total_books, stats.total_issued_book],
         backgroundColor: ["#36A2EB", "#FFCE56"],
         hoverBackgroundColor: ["#36A2EB", "#FFCE56"],
       },
     ],
-  }
+  };
 
   return (
     <div className="dashboard">
@@ -28,15 +61,15 @@ const Dashboard = ({ books, issuedBooks, users }) => {
       <div className="dashboard-stats">
         <div className="stat-item">
           <h3>Total Books</h3>
-          <p>{totalCopies}</p>
-        </div>
-        <div className="stat-item">
-          <h3>Currently Issued Books</h3>
-          <p>{currentlyIssuedBooks}</p>
+          <p>{stats.total_books}</p>
         </div>
         <div className="stat-item">
           <h3>Total Users</h3>
-          <p>{users.length}</p>
+          <p>{stats.total_users}</p>
+        </div>
+        <div className="stat-item">
+          <h3>Total Issued Books</h3>
+          <p>{stats.total_issued_book}</p>
         </div>
       </div>
       <div className="dashboard-charts">
@@ -46,7 +79,7 @@ const Dashboard = ({ books, issuedBooks, users }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -1,11 +1,32 @@
  "use client"
 
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import { FaBook, FaUser, FaBuilding, FaBarcode, FaSearch } from "react-icons/fa"
 import "./BookList.css"
+import axios from "axios"
 
-const BookList = ({ books = [], onRequestBook }) => {
+const BookList = ({ onRequestBook }) => {
   const [searchTerm, setSearchTerm] = useState("")
+  const [books, setBooks] = useState([])
+   
+
+  useEffect(() => {
+    fetchBooks()
+    
+  }, [])
+
+  const fetchBooks = async () => {
+    try {
+        const token =localStorage.getItem("token")
+      const response = await axios.get("http://localhost:8080/book/",{headers:{
+        Authorization:` Bearer ${token}`,
+    },})
+      setBooks(response.data.books)
+    } catch (error) {
+      console.error("Error fetching books:", error)
+    }
+  }
+
 
   const filteredBooks = books.filter(
     (book) =>

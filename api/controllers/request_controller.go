@@ -211,13 +211,13 @@ func GetAllRequestsForAdmin(c *gin.Context) {
 
 	// Call service to fetch all requests
 
-	// libID, err := GetLibraryID(c)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-	requests, err := services.GetAllRequests()
+	requests, err := services.GetAllRequests(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

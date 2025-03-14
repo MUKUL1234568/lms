@@ -13,6 +13,7 @@ import AddBookModal from "../components/books/AddBookModal"
  import EditBookModal from "../components/books/Editbookmodal"
 import "./OwnerDashboard.css"
 import AdminManagement from "../components/admin/Adminmanagement"
+import ALLRequestList from "../components/admin/AllRequestList"
 
 const admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard")
@@ -23,6 +24,28 @@ const admin = () => {
   const [users, setUsers] = useState([])
    const [requests, setRequests] = useState([])
    const [issueregistry,setissueregistry]=useState([])
+
+   const fetchbook= async ()=>{
+    const token =localStorage.getItem("token");
+  
+    try{
+      const response =await axios.get("http://localhost:8080/book/",{
+        headers:{
+            Authorization:` Bearer ${token}`,
+        },
+      });
+     
+      if(response.status==200)
+      {
+        setBooks(response.data.books)
+      }
+      else{
+        console.log("error in fetching the books from database")
+      }
+    } catch(error){
+        console.error("error in fetching the ",error)
+    }
+  };
 
  const fetchIssueregistry=async ()=>{
   const token =localStorage.getItem("token");
@@ -46,27 +69,7 @@ const admin = () => {
   }
  };
 
-  const fetchbook= async ()=>{
-    const token =localStorage.getItem("token");
   
-    try{
-      const response =await axios.get("http://localhost:8080/book/",{
-        headers:{
-            Authorization:` Bearer ${token}`,
-        },
-      });
-     
-      if(response.status==200)
-      {
-        setBooks(response.data.books)
-      }
-      else{
-        console.log("error in fetching the books from database")
-      }
-    } catch(error){
-        console.error("error in fetching the ",error)
-    }
-  };
   const fetchuser= async ()=>{
     const token =localStorage.getItem("token");
   
@@ -126,31 +129,51 @@ const admin = () => {
  
  
 
-  const addBook =  async (newBook) => {
-    
-    const token=localStorage.getItem("token")
-    try{
-      const response= await axios.post("http://localhost:8080/book/",{...newBook, total_copies: Number(newBook.total_copies)} ,{
-        headers:{ "Content-Type":"application/json",
-          Authorization:`Bearer ${token}`
-                  
-        }
-        
-      });
-         if(response.status==201){
-          setBooks([...books, { ...newBook,available_copies:newBook.total_copies }])
-          console.log("book added")
-         }
-         else{
-          console.error("faild to add book ")
-         }
+const addBook = async (newBook) => {
+  const token = localStorage.getItem("token");
 
-    } catch(error){
-            console.error("erroe in adding the book",error)
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/book/",
+      { ...newBook, total_copies: Number(newBook.total_copies) },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      // New book added, so just append it to the state
+      setBooks([...books, { ...newBook, available_copies: newBook.total_copies }]);
+      alert("Book added successfully!");
+    } else if (response.status === 200) {
+      // Book already exists, update its total and available copies
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.isbn === newBook.isbn
+            ? {
+                ...book,
+                total_copies: book.total_copies + Number(newBook.total_copies),
+                available_copies: book.available_copies + Number(newBook.total_copies),
+              }
+            : book
+        )
+      );
+      alert("Book already exists! Updated total and available copies.");
+    } else {
+      console.error("Failed to add book");
     }
-    setShowAddBookModal(false)
-
+  } catch (error) {
+    console.error("Error adding the book", error);
+    alert("Failed to add the book. Please try again.");
   }
+
+  setShowAddBookModal(false);
+};
+
+
 
   const updateBook = async (updatedBook) => {
     // console.log(updatedBook)
@@ -296,7 +319,7 @@ try{
       <div className="main-content">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="content">
-        {activeTab === "dashboard" && <Dashboard books={books} issuedBooks={issueregistry} users={users} />}
+        {activeTab === "dashboard" && <Dashboard />}
           {activeTab === "books" && (
             <>
               <div className="content-header">
@@ -308,12 +331,12 @@ try{
                 </div>
               </div>
               <BookList
-                books={books}
                 onEdit={(book) => {
                   setEditingBook(book)
                   setShowEditBookModal(true)
                 }}
                 onRemove={removeBook}
+                books={books}
               />
             </>
           )}
@@ -327,7 +350,7 @@ try{
           {activeTab === "users" && (
             <>
               <h2>User List</h2>
-              <UserList users={users} issuedBooks={issueregistry} books={books}/>
+              <UserList users={users}  />
             </>
           )}
           {activeTab === "issued" && (
@@ -336,6 +359,7 @@ try{
               <IssuedBookList  issueregistry={issueregistry}  />
             </>
           )}
+            {activeTab === "allrequests"  && <ALLRequestList requests={requests}  />}
            {activeTab === "adminmanagement" &&(
             <>
              

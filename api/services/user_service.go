@@ -9,6 +9,13 @@ import (
 
 // RegisterUser adds a new user to the database
 func RegisterUser(user *models.User) error {
+	var existingUser models.User
+	if err := config.DB.Where("email = ?", user.Email).First(&existingUser).Error; err == nil {
+		// User with this email already exists
+		return errors.New("user with this email already exists")
+	}
+
+	// If no user exists, proceed with registration
 	return config.DB.Create(user).Error
 }
 

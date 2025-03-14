@@ -10,13 +10,13 @@ import (
 // GetAllIssuedBooks retrieves all issued books (Only for LibraryAdmin)
 func GetAllIssuedBooks(c *gin.Context) {
 	// Check if the user is a LibraryAdmin
-	// libID, err := GetLibraryID(c)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	libID, err := GetLibraryID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
 
-	issuedBooks, err := services.GetAllIssuedBooks()
+	issuedBooks, err := services.GetAllIssuedBooks(libID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
